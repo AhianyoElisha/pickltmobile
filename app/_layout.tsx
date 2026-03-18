@@ -7,6 +7,17 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { AuthProvider, useAuth } from '@/context/auth-context';
+import { Colors } from '@/constants/theme';
+
+// Matches the app background so screens never flash white during transitions
+const AppTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: Colors.background,
+    card: Colors.background,
+  },
+};
 
 SplashScreen.preventAutoHideAsync();
 
@@ -51,15 +62,32 @@ function RootNavigator() {
   }, [isLoading, fontsLoaded, token, hasSeenOnboarding, hasConfirmedProfile, segments]);
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        // Native slide-from-right for every push — feels intentional, not choppy
+        animation: 'slide_from_right',
+        // Match app background so there is never a white flash mid-transition
+        contentStyle: { backgroundColor: Colors.background },
+        // Allow swipe-back on iOS; gesture tracks the animation in real time
+        gestureEnabled: true,
+      }}>
       <Stack.Screen name="(onboarding)" />
       <Stack.Screen name="(auth)" />
       <Stack.Screen name="(tabs)" />
-      <Stack.Screen name="profile-confirmation" options={{ presentation: 'fullScreenModal' }} />
+      <Stack.Screen
+        name="profile-confirmation"
+        options={{
+          presentation: 'fullScreenModal',
+          animation: 'slide_from_bottom',
+          gestureEnabled: true,
+        }}
+      />
       <Stack.Screen name="move-details" />
-      <Stack.Screen name="instant-results" />
-      <Stack.Screen name="pickup-information" />
-      <Stack.Screen name="add-move-photos" />
+      <Stack.Screen name="instant/pickup-information" />
+      <Stack.Screen name="instant/add-move-photos" />
+      <Stack.Screen name="instant/select-mover" />
+      <Stack.Screen name="instant/track-move" />
       <Stack.Screen name="scheduled-results" />
     </Stack>
   );
@@ -68,7 +96,7 @@ function RootNavigator() {
 export default function RootLayout() {
   return (
     <AuthProvider>
-      <ThemeProvider value={DefaultTheme}>
+      <ThemeProvider value={AppTheme}>
         <RootNavigator />
         <StatusBar style="auto" />
       </ThemeProvider>

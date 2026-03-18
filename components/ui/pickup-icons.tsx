@@ -155,6 +155,75 @@ export function MinusCircleIcon({
   );
 }
 
+// ── Star icon (feather-star, filled yellow) ───────────────────────────────────
+export function StarIcon({ size = 16 }: { size?: number }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 16 16" fill="none">
+      <Path
+        d="M8 0L10.4723 5.26569L16 6.11913L12 10.2156L12.9483 16L8.00474 13.2662L3.05548 15.9981L4.00379 10.2137L0 6.11533L5.52774 5.2619L8 0Z"
+        fill="#FBCB2E"
+      />
+    </Svg>
+  );
+}
+
+// ── Users / profile-2user icon ────────────────────────────────────────────────
+export function UsersIcon({
+  color = '#fff',
+  size = 20,
+}: {
+  color?: string;
+  size?: number;
+}) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 20 20" fill="none">
+      <Path d="M7.63216 9.06159C7.54883 9.05326 7.44883 9.05326 7.35716 9.06159C5.37383 8.99492 3.79883 7.36992 3.79883 5.36992C3.79883 3.32826 5.44883 1.66992 7.49883 1.66992C9.54049 1.66992 11.1988 3.32826 11.1988 5.36992C11.1905 7.36992 9.61549 8.99492 7.63216 9.06159Z" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M13.6752 3.33008C15.2919 3.33008 16.5919 4.63841 16.5919 6.24674C16.5919 7.82174 15.3419 9.10508 13.7836 9.16341C13.7169 9.15508 13.6419 9.15508 13.5669 9.16341" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M3.46562 12.1301C1.44896 13.4801 1.44896 15.6801 3.46562 17.0217C5.75729 18.5551 9.51562 18.5551 11.8073 17.0217C13.824 15.6717 13.824 13.4717 11.8073 12.1301C9.52396 10.6051 5.76562 10.6051 3.46562 12.1301Z" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M15.2832 16.6699C15.8832 16.5449 16.4499 16.3033 16.9165 15.9449C18.2165 14.9699 18.2165 13.3616 16.9165 12.3866C16.4582 12.0366 15.8999 11.8033 15.3082 11.6699" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
+// ── Shopping bag icon ─────────────────────────────────────────────────────────
+export function ShoppingBagIcon({
+  color = '#fff',
+  size = 20,
+}: {
+  color?: string;
+  size?: number;
+}) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 20 20" fill="none">
+      <Path d="M7.00002 5.41667H13C15.8334 5.41667 16.1167 6.74167 16.3084 8.35833L17.0584 14.6083C17.3 16.6583 16.6667 18.3333 13.75 18.3333H6.25835C3.33335 18.3333 2.70002 16.6583 2.95002 14.6083L3.70003 8.35833C3.88336 6.74167 4.16669 5.41667 7.00002 5.41667Z" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M6.66667 6.66667V3.75C6.66667 2.5 7.5 1.66667 8.75 1.66667H11.25C12.5 1.66667 13.3333 2.5 13.3333 3.75V6.66667" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M17.0083 14.1915H6.66667" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
+// ── Vehicle / truck-group icon ────────────────────────────────────────────────
+export function VehicleIcon({
+  color = '#697586',
+  size = 15,
+}: {
+  color?: string;
+  size?: number;
+}) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 15 15" fill="none">
+      <Path d="M7.5 8.75H8.125C8.8125 8.75 9.375 8.1875 9.375 7.5V1.25H3.75C2.8125 1.25 1.99376 1.76874 1.56876 2.53124" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M1.25 10.625C1.25 11.6625 2.0875 12.5 3.125 12.5H3.75C3.75 11.8125 4.3125 11.25 5 11.25C5.6875 11.25 6.25 11.8125 6.25 12.5H8.75C8.75 11.8125 9.3125 11.25 10 11.25C10.6875 11.25 11.25 11.8125 11.25 12.5H11.875C12.9125 12.5 13.75 11.6625 13.75 10.625V8.75H11.875C11.5312 8.75 11.25 8.46875 11.25 8.125V6.25C11.25 5.90625 11.5312 5.625 11.875 5.625H12.6812L11.6125 3.75626C11.3875 3.36876 10.975 3.125 10.525 3.125H9.375V7.5C9.375 8.1875 8.8125 8.75 8.125 8.75H7.5" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M5 13.75C5.69036 13.75 6.25 13.1904 6.25 12.5C6.25 11.8096 5.69036 11.25 5 11.25C4.30964 11.25 3.75 11.8096 3.75 12.5C3.75 13.1904 4.30964 13.75 5 13.75Z" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M10 13.75C10.6904 13.75 11.25 13.1904 11.25 12.5C11.25 11.8096 10.6904 11.25 10 11.25C9.30964 11.25 8.75 11.8096 8.75 12.5C8.75 13.1904 9.30964 13.75 10 13.75Z" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M13.75 7.5V8.75H11.875C11.5312 8.75 11.25 8.46875 11.25 8.125V6.25C11.25 5.90625 11.5312 5.625 11.875 5.625H12.6812L13.75 7.5Z" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M1.25 5H5" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M1.25 6.875H3.75" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M1.25 8.75H2.5" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
 // ── Camera icon ───────────────────────────────────────────────────────────────
 export function CameraIcon({
   color = '#697586',
@@ -230,6 +299,54 @@ export function GalleryAddIcon({
       />
       <Path
         d="M2.67 18.95L7.6 15.64C8.39 15.11 9.53 15.17 10.24 15.78L10.57 16.07C11.35 16.74 12.61 16.74 13.39 16.07L17.55 12.5C18.33 11.83 19.59 11.83 20.37 12.5L22 13.9"
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
+
+// ── Call / phone icon (vuesax/linear/call) ────────────────────────────────────
+export function CallIcon({
+  color = '#697586',
+  size = 24,
+}: {
+  color?: string;
+  size?: number;
+}) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M21.97 18.33C21.97 18.69 21.89 19.06 21.72 19.42C21.55 19.78 21.33 20.12 21.04 20.44C20.55 20.98 20.01 21.37 19.4 21.62C18.8 21.87 18.15 22 17.45 22C16.43 22 15.34 21.76 14.19 21.27C13.04 20.78 11.89 20.12 10.75 19.29C9.6 18.45 8.51 17.52 7.47 16.49C6.44 15.45 5.51 14.36 4.68 13.22C3.86 12.08 3.2 10.94 2.72 9.81C2.24 8.67 2 7.58 2 6.54C2 5.86 2.12 5.21 2.36 4.61C2.6 4 2.98 3.44 3.51 2.94C4.15 2.31 4.85 2 5.59 2C5.87 2 6.15 2.06 6.4 2.18C6.66 2.3 6.89 2.48 7.07 2.74L9.39 6.01C9.57 6.26 9.7 6.49 9.79 6.71C9.88 6.92 9.93 7.13 9.93 7.32C9.93 7.56 9.86 7.8 9.72 8.03C9.59 8.26 9.4 8.5 9.16 8.74L8.4 9.53C8.29 9.64 8.24 9.77 8.24 9.93C8.24 10.01 8.25 10.08 8.27 10.16C8.3 10.24 8.33 10.3 8.35 10.36C8.53 10.69 8.84 11.12 9.28 11.64C9.73 12.16 10.21 12.69 10.73 13.22C11.27 13.75 11.79 14.24 12.32 14.69C12.84 15.13 13.27 15.43 13.61 15.61C13.66 15.63 13.72 15.66 13.79 15.69C13.87 15.72 13.95 15.73 14.04 15.73C14.21 15.73 14.34 15.67 14.45 15.56L15.21 14.81C15.46 14.56 15.7 14.37 15.93 14.25C16.16 14.11 16.39 14.04 16.64 14.04C16.83 14.04 17.03 14.08 17.25 14.17C17.47 14.26 17.7 14.39 17.95 14.56L21.26 16.91C21.52 17.09 21.7 17.3 21.81 17.55C21.91 17.8 21.97 18.05 21.97 18.33Z"
+        stroke={color}
+        strokeWidth={1.5}
+        strokeMiterlimit={10}
+      />
+    </Svg>
+  );
+}
+
+// ── Message / chat bubble icon ────────────────────────────────────────────────
+export function MessageIcon({
+  color = '#697586',
+  size = 24,
+}: {
+  color?: string;
+  size?: number;
+}) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M8.5 14.5H15.5M8.5 9.5H12"
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <Path
+        d="M14.1706 20.8905C18.3536 20.6125 21.6856 17.2332 21.9598 12.9909C22.0134 12.1607 22.0134 11.3009 21.9598 10.4707C21.6856 6.22838 18.3536 2.84913 14.1706 2.57107C12.7435 2.47621 11.2536 2.47641 9.8294 2.57107C5.64639 2.84913 2.31441 6.22838 2.04024 10.4707C1.98659 11.3009 1.98659 12.1607 2.04024 12.9909C2.1401 14.536 2.82343 15.9666 3.62791 17.1746C4.09501 18.0203 3.78674 19.0758 3.30021 19.9978C2.94941 20.6626 2.77401 20.995 2.91484 21.2351C3.05568 21.4752 3.37026 21.4829 3.99943 21.4982C5.24367 21.5285 6.08268 21.1757 6.74868 20.6846C7.1264 20.4061 7.31527 20.2668 7.44544 20.2508C7.5756 20.2348 7.83177 20.3403 8.34401 20.5513C8.8044 20.7409 9.33896 20.8579 9.8294 20.8905C11.2536 20.9852 12.7435 20.9854 14.1706 20.8905Z"
         stroke={color}
         strokeWidth={1.5}
         strokeLinecap="round"
