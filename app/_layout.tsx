@@ -1,24 +1,77 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
+import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
+import { Stack, router, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
 import 'react-native-reanimated';
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { AuthProvider, useAuth } from '@/context/auth-context';
 
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
+function RootNavigator() {
+  const { isLoading, token, hasSeenOnboarding, hasConfirmedProfile } = useAuth();
+  const segments = useSegments();
+
+  const [fontsLoaded] = useFonts({
+    'SFProDisplay-Regular': require('@/assets/fonts/SF-Pro-Display-Regular.otf'),
+    'SFProDisplay-Medium': require('@/assets/fonts/SF-Pro-Display-Medium.otf'),
+    'SFProDisplay-Semibold': require('@/assets/fonts/SF-Pro-Display-Semibold.otf'),
+    'SFProDisplay-Bold': require('@/assets/fonts/SF-Pro-Display-Bold.otf'),
+    'SFProDisplay-Heavy': require('@/assets/fonts/SF-Pro-Display-Heavy.otf'),
+  });
+
+  useEffect(() => {
+    if (isLoading || !fontsLoaded) return;
+
+    SplashScreen.hideAsync();
+
+    const inOnboarding = segments[0] === '(onboarding)';
+    const inAuth = segments[0] === '(auth)';
+    const onProfileConfirmation = segments[0] === 'profile-confirmation';
+
+    if (token === null) {
+      if (!hasSeenOnboarding && !inOnboarding) {
+        router.replace('/(onboarding)/splash');
+      } else if (hasSeenOnboarding && !inAuth && !inOnboarding) {
+        // !inOnboarding allows get-started to remain in the onboarding group
+        // while the user decides to sign up or sign in
+        router.replace('/(auth)/login');
+      }
+    } else {
+      if (!hasConfirmedProfile && !onProfileConfirmation) {
+        router.replace('/profile-confirmation');
+      } else if (hasConfirmedProfile && (inOnboarding || inAuth)) {
+        // Only redirect to tabs when coming from unauthenticated flows —
+        // not when navigating to app screens like instant-results, move-details, etc.
+        router.replace('/(tabs)');
+      }
+    }
+  }, [isLoading, fontsLoaded, token, hasSeenOnboarding, hasConfirmedProfile, segments]);
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="(onboarding)" />
+      <Stack.Screen name="(auth)" />
+      <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="profile-confirmation" options={{ presentation: 'fullScreenModal' }} />
+      <Stack.Screen name="move-details" />
+      <Stack.Screen name="instant-results" />
+      <Stack.Screen name="pickup-information" />
+      <Stack.Screen name="add-move-photos" />
+      <Stack.Screen name="scheduled-results" />
+    </Stack>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <AuthProvider>
+      <ThemeProvider value={DefaultTheme}>
+        <RootNavigator />
+        <StatusBar style="auto" />
+      </ThemeProvider>
+    </AuthProvider>
   );
 }
