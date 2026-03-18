@@ -1,0 +1,53 @@
+import { Image } from 'expo-image';
+import { router } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+
+import { Colors, FontFamily } from '@/constants/theme';
+
+const logo = require('@/assets/images/logo.png');
+
+export default function SplashScreen() {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      router.replace('/(onboarding)/onboarding');
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <View style={styles.container}>
+      <StatusBar style="dark" />
+      <View style={styles.logoGroup}>
+        <Image source={logo} style={styles.logo} contentFit="contain" />
+        <Text style={styles.tagline}>A stress-free move, every time.</Text>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logoGroup: {
+    alignItems: 'center',
+    gap: 8,
+  },
+  logo: {
+    width: 147,
+    height: 49,
+  },
+  tagline: {
+    fontFamily: FontFamily.regular,
+    fontSize: 14,
+    lineHeight: 19.6,
+    color: Colors.textPrimary,
+    textAlign: 'center',
+    width: 205,
+  },
+});
