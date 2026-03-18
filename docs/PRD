@@ -1,0 +1,137 @@
+# Product Requirements Document (PRD): PickLT Client Mobile App
+
+## Product Overview
+
+PickLT is a European-based mobile and web application designed to simplify the process of moving items, properties, and belongings for anyone relocating — whether from apartments, offices, or businesses — from one area or building to another. This PRD covers the **client-facing mobile application** built with React Native and Expo, targeting the person requesting the move (not the driver/mover).
+
+## Goals & Objectives
+
+- Provide a frictionless, on-demand and scheduled moving service experience for clients.
+- Ensure secure and verified user access via email/Google authentication plus mandatory phone OTP verification.
+- Allow users to initiate instant or scheduled move requests with clear configuration options.
+- Keep users informed of their move statuses through an intuitive dashboard.
+- Deliver a polished, Figma-faithful UI using Claude Code + Figma MCP for design-to-code translation.
+
+## Target Users
+
+- Individuals relocating apartments or personal belongings within Europe.
+- Offices and businesses moving equipment, furniture, or inventory between locations.
+- Anyone who needs items picked up from one location and delivered to another.
+
+## Core Features
+
+### 1. Onboarding & Splash
+- Branded splash screen on app launch.
+- Carousel-style onboarding screens introducing the app's value proposition (instant moves, scheduled moves).
+- Options to sign up with email, sign up with Google, or sign in (for returning users).
+- First-time users flow through onboarding; returning users with valid tokens bypass to Home.
+
+### 2. User Authentication
+- **Sign Up:** Custom email/password or Google SSO.
+- **Mandatory Phone Verification:** Regardless of sign-up method, every user must verify their phone number via SMS OTP (4–6 digits).
+- **Post-Signup Profile Confirmation:** New users are routed to a settings/profile page to confirm their name and personal details. This is important because Google auth may not reflect a user's real name, and real names are recommended for the service.
+- **Sign In:** Email/password login for returning users with the same OTP flow if needed.
+
+### 3. Password Change / Recovery
+- User taps "Forgot Password" from the login screen.
+- User selects OTP delivery method: Email or Phone number.
+- User receives OTP, enters it, then sets a new password.
+- Redirects back to login after successful password change.
+
+### 4. Home Dashboard
+- **Move Request Form:** A prominent form at the top of the home screen allowing users to:
+  - Toggle between **Instant** and **Scheduled** move categories.
+  - Enter **Pickup Location** and **Drop-off Location**.
+  - Select **Move Type**: Light, Regular, or Premium.
+  - Submit to initiate the move request process.
+- **Move Status Dashboard:** Below the form, a set of category tabs (e.g., Pending, In Transit, Completed) displaying move request cards.
+- **Move Cards:** Compact cards showing minimal move details (date, locations, status tag). Tapping a card navigates to the Move Details screen.
+
+### 5. Move Details
+- Full detail view of a selected move request.
+- Displays all move information: pickup/drop-off addresses, move type, status, date/time, and any additional notes.
+
+### 6. Bottom Navigation Bar
+- Persistent across all authenticated screens.
+- Contains 4 tabs representing the core app sections.
+- Home tab is the default selected tab and default landing page.
+
+### 7. Profile / Settings
+- View and edit personal details (name, email, phone).
+- Profile confirmation screen shown after first sign-up.
+
+## Move Types
+
+| Type | Description |
+|------|-------------|
+| **Light** | Small moves — a few boxes, bags, or small items. |
+| **Regular** | Standard apartment or office move with typical furniture and belongings. |
+| **Premium** | Large-scale or high-value moves requiring special handling, extra movers, or larger vehicles. |
+
+## Move Categories
+
+| Category | Description |
+|----------|-------------|
+| **Instant** | On-demand move request. User needs items moved as soon as possible. |
+| **Scheduled** | Pre-planned move. User sets a future date/time for the move. |
+
+## Out of Scope (This Phase)
+
+- Driver/Mover-facing application features.
+- Mobile backend infrastructure setup (relying on existing web app backend; mobile API integration to follow).
+- Payment gateway integration (UI-only phase).
+- In-app chat or messaging between client and mover.
+- Push notification system.
+
+## Tech Stack
+
+- **Frontend:** React Native with Expo (managed workflow).
+- **Design Source:** Figma with Figma MCP for design-to-code context.
+- **AI Coding Agent:** Claude Code for accelerated UI development.
+- **Navigation:** Expo Router (file-based routing).
+
+## Screen Inventory
+
+| Screen | Spec File | Figma Frames |
+|--------|-----------|--------------|
+| Splash & Onboarding | `screens/splash-onboarding.md` | 4 frames |
+| Auth (Login, Signup, OTP) | `screens/auth-flow.md` | 7 frames |
+| Password Change | `screens/password-change.md` | 4 frames |
+| Profile Confirmation | `screens/profile-confirmation.md` | 1 frame |
+| Home Dashboard | `screens/home.md` | Multiple frames |
+| Move Details | `screens/move-details.md` | TBD |
+| Bottom Navigation | `screens/bottom-nav.md` | Shared component |
+
+## Navigation Architecture
+
+```
+App Launch
+  └─> Splash Screen
+        └─> Onboarding Carousel (first-time users)
+              └─> Auth Flow
+                    ├─> Sign Up (Email or Google)
+                    │     └─> Phone OTP Verification
+                    │           └─> Profile Confirmation (Settings)
+                    │                 └─> Home Dashboard
+                    ├─> Sign In
+                    │     └─> Home Dashboard
+                    └─> Forgot Password
+                          └─> Select OTP Method (Email/Phone)
+                                └─> Enter OTP
+                                      └─> Set New Password
+                                            └─> Login
+
+Home Dashboard (with Bottom Nav)
+  ├─> Tab 1: Home (default) — Move Request Form + Status Cards
+  ├─> Tab 2: TBD
+  ├─> Tab 3: TBD
+  └─> Tab 4: TBD
+
+Move Card Tap → Move Details Screen
+```
+
+## Figma Design Source
+
+All screens reference the Figma file: `yG9jobqptDSJTE7NYw1Joh/PickLT`
+
+Individual frame node-ids are documented in each screen spec markdown file.
