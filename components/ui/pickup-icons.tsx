@@ -1,4 +1,4 @@
-import Svg, { Circle, Path, G } from 'react-native-svg';
+import Svg, { Circle, Line, Path, G } from 'react-native-svg';
 
 // ── Back arrow (ArrowLeft) — viewBox 0 0 20 20, stroke-based ─────────────────
 export function ArrowLeftIcon({
@@ -370,6 +370,22 @@ export function PlusCircleIcon({
         d="M16 4C9.37321 4 4 9.37321 4 16C4 22.6268 9.37321 28 16 28C22.6268 28 28 22.6268 28 16C28 9.37321 22.6268 4 16 4ZM21.1429 16.6429C21.1429 16.7607 21.0464 16.8571 20.9286 16.8571H16.8571V20.9286C16.8571 21.0464 16.7607 21.1429 16.6429 21.1429H15.3571C15.2393 21.1429 15.1429 21.0464 15.1429 20.9286V16.8571H11.0714C10.9536 16.8571 10.8571 16.7607 10.8571 16.6429V15.3571C10.8571 15.2393 10.9536 15.1429 11.0714 15.1429H15.1429V11.0714C15.1429 10.9536 15.2393 10.8571 15.3571 10.8571H16.6429C16.7607 10.8571 16.8571 10.9536 16.8571 11.0714V15.1429H20.9286C21.0464 15.1429 21.1429 15.2393 21.1429 15.3571V16.6429Z"
         fill={color}
       />
+    </Svg>
+  );
+}
+
+// ── Route connector (filled dot → line → hollow dot) — viewBox 0 0 11 52 ─────
+// Extracted from Figma asset: assets/icons/route-connector.svg
+export function RouteConnectorIcon() {
+  return (
+    <Svg width={11} height={52} viewBox="0 0 11 52" fill="none">
+      {/* Top filled circle (pick-up) */}
+      <Circle cx={5.5} cy={5.5} r={5.5} fill="#0D121C" />
+      {/* Connecting line */}
+      <Line x1={5.5} y1={8} x2={5.5} y2={50} stroke="#0D121C" />
+      {/* Bottom circle (drop-off) — black ring + white fill centre */}
+      <Circle cx={5.5} cy={46.5} r={5.5} fill="#0D121C" />
+      <Circle cx={5.5} cy={46.5} r={2.2} fill="white" />
     </Svg>
   );
 }

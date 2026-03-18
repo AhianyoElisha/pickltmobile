@@ -1,163 +1,197 @@
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import {
+  CallIcon,
+  MessageIcon,
+  RouteConnectorIcon,
+  StarIcon,
+  UsersIcon,
+  VehicleIcon,
+} from '@/components/ui/pickup-icons';
 import { Colors, FontFamily } from '@/constants/theme';
 
-// ── Figma asset URLs (valid for 7 days) ────────────────────────────────────────
-const A = {
-  map:            'https://www.figma.com/api/mcp/asset/7cd54e0b-d3fe-433c-997e-af6a84b2abe1',
-  routeConnector: 'https://www.figma.com/api/mcp/asset/628a0dd8-28ad-4e04-bcb2-758fef8b9ca9',
-  routeLine:      'https://www.figma.com/api/mcp/asset/0f91616f-ee45-40be-8894-28eaedec71a0',
-  pinRed:         'https://www.figma.com/api/mcp/asset/ed34e124-9274-4324-aaf5-35498af45619',
-  pinGreen:       'https://www.figma.com/api/mcp/asset/c8f31e82-dd0f-4d2c-8c68-b65a7f18d80f',
-  truck:          'https://www.figma.com/api/mcp/asset/f8c88763-b873-45e9-b2b9-c5dcbe5efd57',
-  avatar:         'https://www.figma.com/api/mcp/asset/21bf82e1-57aa-458c-b598-69adcdb642f7',
-  vehicleGroup:   'https://www.figma.com/api/mcp/asset/f42a4560-38ad-430e-b52f-6520083731fd',
-  callIcon:       'https://www.figma.com/api/mcp/asset/ec349a01-2cdd-465a-a3bd-be959857eab6',
-  messageIcon:    'https://www.figma.com/api/mcp/asset/db28274b-edb6-4266-98ef-0b37be76a716',
-  starIcon:       'https://www.figma.com/api/mcp/asset/4ca6e745-d366-4759-8d6c-807ba3ecd8f5',
-  profile2User:   'https://www.figma.com/api/mcp/asset/c9f85f85-f821-443c-968f-700bf05b6c67',
-};
+// ── Figma asset URLs for image-based elements (map photo, avatar photo) ────────
+const MAP_IMG    = 'https://www.figma.com/api/mcp/asset/7cd54e0b-d3fe-433c-997e-af6a84b2abe1';
+const AVATAR_IMG = 'https://www.figma.com/api/mcp/asset/21bf82e1-57aa-458c-b598-69adcdb642f7';
+
+// ── Map overlay decorative assets (pins, truck, route line) ────────────────────
+const ROUTE_LINE = 'https://www.figma.com/api/mcp/asset/0f91616f-ee45-40be-8894-28eaedec71a0';
+const PIN_RED    = 'https://www.figma.com/api/mcp/asset/ed34e124-9274-4324-aaf5-35498af45619';
+const PIN_GREEN  = 'https://www.figma.com/api/mcp/asset/c8f31e82-dd0f-4d2c-8c68-b65a7f18d80f';
+const TRUCK_IMG  = 'https://www.figma.com/api/mcp/asset/f8c88763-b873-45e9-b2b9-c5dcbe5efd57';
 
 export default function TrackMoveScreen() {
+  const insets = useSafeAreaInsets();
+
+  // Cancel button sits 8 pt above the safe-area bottom (home indicator / nav bar)
+  const cancelBottom  = insets.bottom + 8;
+  // Service card sits cancel(52) + gap(14) above cancel button
+  const cardBottom    = cancelBottom + 52 + 14;
+
   return (
     <View style={styles.root}>
       <StatusBar style="light" />
 
-      {/* ── Full-screen map background ─────────────────────────────────────── */}
+      {/* ── Full-screen map ──────────────────────────────────────────────── */}
       <View style={StyleSheet.absoluteFill}>
-        <View style={styles.mapDarkBase} />
-        <Image source={A.map} style={StyleSheet.absoluteFill} contentFit="cover" />
+        <View style={styles.mapBase} />
+        <Image source={MAP_IMG} style={StyleSheet.absoluteFill} contentFit="cover" />
         <View style={styles.mapOverlay} />
       </View>
 
-      {/* ── Decorative green circle (map placeholder glow) ─────────────────── */}
-      <View style={styles.greenCircle} />
+      {/* ── Map decorative elements ──────────────────────────────────────── */}
 
-      {/* ── Route path line on map ─────────────────────────────────────────── */}
+      {/* Green placeholder glow circle */}
+      <View style={styles.glowCircle} />
+
+      {/* Blue route path */}
       <View style={styles.routeLineWrap}>
-        <Image source={A.routeLine} style={styles.routeLineImg} contentFit="contain" />
-      </View>
-
-      {/* ── Red pickup pin ─────────────────────────────────────────────────── */}
-      <View style={styles.pinRed}>
-        <Image source={A.pinRed} style={styles.pinImg} contentFit="contain" />
-      </View>
-
-      {/* ── Green indicator dot with pulse ring ────────────────────────────── */}
-      <View style={styles.indicatorRing}>
-        <View style={styles.indicatorDot} />
-      </View>
-
-      {/* ── Truck image on map ─────────────────────────────────────────────── */}
-      <View style={styles.truckWrap}>
-        <Image source={A.truck} style={styles.truckImg} contentFit="contain" />
-      </View>
-
-      {/* ── Green destination pin ──────────────────────────────────────────── */}
-      <View style={styles.pinGreen}>
-        <Image source={A.pinGreen} style={styles.pinImg} contentFit="contain" />
-      </View>
-
-      {/* ── Route card (top overlay) ───────────────────────────────────────── */}
-      <View style={styles.routeCard}>
-
-        {/* Pick-up row */}
-        <View style={styles.routeTopRow}>
-          <View style={styles.routeLocInfo}>
-            <Text style={styles.routeLocLabel}>Pick Up Location</Text>
-            <Text style={styles.routeLocValue}>Kumasi, Ashanti Region</Text>
-          </View>
-          <View style={styles.routeEta}>
-            <Text style={styles.routeEtaDistance}>1.1 km</Text>
-            <Text style={styles.routeEtaTime}>3min</Text>
-          </View>
-        </View>
-
-        {/* Divider */}
-        <View style={styles.routeDivider} />
-
-        {/* Drop-off row */}
-        <View style={styles.routeBottomRow}>
-          <View style={styles.routeLocInfo}>
-            <Text style={styles.routeLocLabel}>Drop off Location</Text>
-            <Text style={styles.routeLocValue}>Kotei, Kumasi, Ashanti Region</Text>
-          </View>
-        </View>
-
-        {/* Route connector dots + line (absolute, spans both rows) */}
         <Image
-          source={A.routeConnector}
-          style={styles.routeConnector}
+          source={ROUTE_LINE}
+          style={styles.routeLineImg}
           contentFit="contain"
         />
       </View>
 
-      {/* ── Service info card (bottom overlay) ────────────────────────────── */}
-      <View style={styles.serviceCard}>
+      {/* Red pick-up pin */}
+      <View style={styles.pinRedWrap}>
+        <Image source={PIN_RED} style={styles.pinImg} contentFit="contain" />
+      </View>
 
-        {/* Header: avatar + name/rating + eta */}
-        <View style={styles.serviceHeader}>
-          <Image source={A.avatar} style={styles.serviceAvatar} contentFit="cover" />
+      {/* Green pulsing indicator dot */}
+      <View style={styles.indicatorRing}>
+        <View style={styles.indicatorDot} />
+      </View>
 
-          <View style={styles.serviceNameBlock}>
-            <Text style={styles.serviceName}>William Jane</Text>
-            <View style={styles.serviceRatingRow}>
-              <Image source={A.starIcon} style={styles.starImg} contentFit="contain" />
-              <Text style={styles.serviceRatingText}>4.7 Rating</Text>
-              <Text style={styles.serviceMovesText}>9 moves</Text>
+      {/* Delivery truck (rotated) */}
+      <View style={styles.truckWrap}>
+        <Image source={TRUCK_IMG} style={styles.truckImg} contentFit="contain" />
+      </View>
+
+      {/* Green destination pin */}
+      <View style={styles.pinGreenWrap}>
+        <Image source={PIN_GREEN} style={styles.pinImg} contentFit="contain" />
+      </View>
+
+      {/* ── Route info card (top overlay) ───────────────────────────────── */}
+      {/*
+        Figma exact spec:
+          top: 42, left: 19, width: 343, height: 118, borderRadius: 16
+          Pick Up row: paddingLeft 38, top 16 — divided at y=57
+          Drop off row: top 65 — connector spans y=37..89 at left 23
+      */}
+      <View style={[styles.routeCard, { top: insets.top > 0 ? insets.top - 2 : 42 }]}>
+
+        {/* Pick Up row */}
+        <View style={styles.rcPickRow}>
+          <View style={styles.rcLocBlock}>
+            <Text style={styles.rcLocLabel}>Pick Up Location</Text>
+            <Text style={styles.rcLocValue}>Kumasi, Ashanti Region</Text>
+          </View>
+          <View style={styles.rcEtaBlock}>
+            <Text style={styles.rcEtaDist}>1.1 km</Text>
+            <Text style={styles.rcEtaTime}>3min</Text>
+          </View>
+        </View>
+
+        {/* Horizontal divider at y ≈ 57 */}
+        <View style={styles.rcDivider} />
+
+        {/* Drop off row */}
+        <View style={styles.rcDropRow}>
+          <View style={styles.rcLocBlock}>
+            <Text style={styles.rcLocLabel}>Drop off Location</Text>
+            <Text style={styles.rcLocValue}>Kotei, Kumasi, Ashanti Region</Text>
+          </View>
+        </View>
+
+        {/* Route connector SVG — absolute, left:23, top:37, 11×52
+            It spans across the divider linking pick-up and drop-off dots */}
+        <View style={styles.rcConnector} pointerEvents="none">
+          <RouteConnectorIcon />
+        </View>
+      </View>
+
+      {/* ── Service info card (bottom overlay) ──────────────────────────── */}
+      {/*
+        Figma exact spec:
+          left: 17, width: 343, height: 200, borderRadius: 16
+          Header height: 57, divider 0.5px #CDD5DF
+          Avatar: left 15, top 18.5, 36×36
+          Name block: left 54, top 16
+          ETA block: right 15, top 16
+          Vehicle box: left 19, top 77, 40×40, bg #E3E8EF, borderRadius 10
+          Vehicle icon (20×20): left 29, top 87
+          "Mercedes Benz Sprinter": left 67, top 81
+          "GW-12903-22": left 67, top 99
+          Profile icon + "2 movers": right side, top 88
+          Call button: left 12, top 137, width 153, height 50, borderRadius 40
+          Message button: left 180, top 136, width 153, height 50, borderRadius 40
+      */}
+      <View style={[styles.serviceCard, { bottom: cardBottom }]}>
+
+        {/* ── Header section (top 0..57) ── */}
+        <View style={styles.scHeader}>
+          {/* Avatar */}
+          <Image source={AVATAR_IMG} style={styles.scAvatar} contentFit="cover" />
+
+          {/* Name + rating */}
+          <View style={styles.scNameBlock}>
+            <Text style={styles.scName}>William Jane</Text>
+            <View style={styles.scRatingRow}>
+              <StarIcon size={15} />
+              <Text style={styles.scRatingText}>4.7 Rating</Text>
+              <Text style={styles.scMovesText}>9 moves</Text>
             </View>
           </View>
 
-          <View style={styles.serviceEtaBlock}>
-            <Text style={styles.serviceEtaDist}>5 min</Text>
-            <Text style={styles.serviceEtaTime}>0.1 km away</Text>
+          {/* ETA */}
+          <View style={styles.scEtaBlock}>
+            <Text style={styles.scEtaDist}>5 min</Text>
+            <Text style={styles.scEtaTime}>0.1 km away</Text>
           </View>
         </View>
 
         {/* Header divider */}
-        <View style={styles.headerDivider} />
+        <View style={styles.scDivider} />
 
-        {/* Vehicle row */}
-        <View style={styles.vehicleRow}>
-          <View style={styles.vehicleIconBox}>
-            <Image source={A.vehicleGroup} style={styles.vehicleGroupImg} contentFit="contain" />
-          </View>
-
-          <View style={styles.vehicleDetails}>
-            <Text style={styles.vehicleName}>Mercedes Benz Sprinter</Text>
-            <Text style={styles.vehiclePlate}>GW-12903-22</Text>
-          </View>
-
-          <View style={styles.moversGroup}>
-            <Image source={A.profile2User} style={styles.moversIcon} contentFit="contain" />
-            <Text style={styles.moversText}>2 movers</Text>
-          </View>
+        {/* ── Vehicle section — absolute positions match Figma exactly ── */}
+        {/* Vehicle icon box: left 19, top 77 → top 77 in card */}
+        <View style={styles.scVehicleBox}>
+          <VehicleIcon size={20} color={Colors.textSecondary} />
         </View>
 
-        {/* Call + Message buttons */}
-        <View style={styles.actionRow}>
-          <TouchableOpacity style={styles.actionBtn} activeOpacity={0.8}>
-            <Image source={A.callIcon} style={styles.actionIcon} contentFit="contain" />
-            <Text style={styles.actionBtnLabel}>Call</Text>
-          </TouchableOpacity>
+        {/* Vehicle name: left 67, top 81 */}
+        <Text style={styles.scVehicleName}>Mercedes Benz Sprinter</Text>
 
-          <TouchableOpacity style={[styles.actionBtn, styles.actionBtnRight]} activeOpacity={0.8}>
-            <Image source={A.messageIcon} style={styles.actionIcon} contentFit="contain" />
-            <Text style={styles.actionBtnLabel}>Message</Text>
-          </TouchableOpacity>
+        {/* Plate: left 67, top 99 */}
+        <Text style={styles.scVehiclePlate}>GW-12903-22</Text>
+
+        {/* 2 movers group: right side, top ~88 */}
+        <View style={styles.scMoversGroup}>
+          <UsersIcon size={15} color={Colors.textSecondary} />
+          <Text style={styles.scMoversText}>2 movers</Text>
         </View>
+
+        {/* ── Call button: left 12, top 137, width 153, height 50 ── */}
+        <TouchableOpacity style={styles.scCallBtn} activeOpacity={0.8}>
+          <CallIcon size={24} color="#0D121C" />
+          <Text style={styles.scBtnLabel}>Call</Text>
+        </TouchableOpacity>
+
+        {/* ── Message button: left 180, top 136, width 153, height 50 ── */}
+        <TouchableOpacity style={styles.scMsgBtn} activeOpacity={0.8}>
+          <MessageIcon size={24} color="#0D121C" />
+          <Text style={styles.scBtnLabel}>Message</Text>
+        </TouchableOpacity>
       </View>
 
-      {/* ── Cancel Move button ─────────────────────────────────────────────── */}
-      <View style={styles.cancelWrap}>
+      {/* ── Cancel Move button ───────────────────────────────────────────── */}
+      <View style={[styles.cancelWrap, { bottom: cancelBottom }]}>
         <TouchableOpacity
           style={styles.cancelBtn}
           activeOpacity={0.85}
@@ -165,45 +199,30 @@ export default function TrackMoveScreen() {
           <Text style={styles.cancelText}>Cancel Move</Text>
         </TouchableOpacity>
       </View>
-
-      {/* ── Home indicator ─────────────────────────────────────────────────── */}
-      <View style={styles.homeBar}>
-        <View style={styles.homePill} />
-      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: '#0D0D0D',
-  },
+  root: { flex: 1, backgroundColor: '#0D0D0D' },
 
-  // ── Map ──────────────────────────────────────────────────────────────────────
-  mapDarkBase: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: '#0D0D0D',
-  },
-  mapOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(13,13,13,0.3)',
-  },
+  // ── Map ────────────────────────────────────────────────────────────────────
+  mapBase:    { ...StyleSheet.absoluteFillObject, backgroundColor: '#0D0D0D' },
+  mapOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(13,13,13,0.3)' },
 
-  // ── Decorative green circle ───────────────────────────────────────────────
-  greenCircle: {
+  // ── Map decorative ─────────────────────────────────────────────────────────
+  glowCircle: {
     position: 'absolute',
     left: 25,
-    top: '50%',
-    marginTop: -154,            // center (346/2) - 19 offset = -173+19 = -154
+    // vertically centered on map (top 50% - 327/2 + 19)
+    top: '50%' as unknown as number,
+    marginTop: -154,
     width: 327,
     height: 327,
     borderRadius: 194.5,
     backgroundColor: '#88E6B1',
     opacity: 0.2,
   },
-
-  // ── Route line ────────────────────────────────────────────────────────────
   routeLineWrap: {
     position: 'absolute',
     left: 30,
@@ -216,33 +235,26 @@ const styles = StyleSheet.create({
     height: '100%',
     transform: [{ rotate: '-138.58deg' }],
   },
-
-  // ── Pins ─────────────────────────────────────────────────────────────────
-  pinRed: {
+  pinRedWrap: {
     position: 'absolute',
     left: 50,
     top: 233,
     width: 28.5,
     height: 58.4,
   },
-  pinGreen: {
+  pinGreenWrap: {
     position: 'absolute',
     left: 252,
     top: 416,
     width: 28.5,
     height: 58.4,
   },
-  pinImg: {
-    width: '100%',
-    height: '100%',
-  },
-
-  // ── Green indicator dot ───────────────────────────────────────────────────
+  pinImg: { width: '100%', height: '100%' },
   indicatorRing: {
     position: 'absolute',
-    left: 185 - 20,             // dot center minus ring radius
-    top: 406 - 20,
-    width: 52,                  // 12 dot + 20 ring each side
+    left: 165,   // 185 (dot centre) - 20 (ring radius)
+    top: 386,    // 406 (dot centre) - 20
+    width: 52,
     height: 52,
     borderRadius: 26,
     backgroundColor: 'rgba(9,146,80,0.3)',
@@ -252,13 +264,11 @@ const styles = StyleSheet.create({
   indicatorDot: {
     width: 12,
     height: 12,
-    borderRadius: 100,
+    borderRadius: 6,
     backgroundColor: '#0AAA5D',
     borderWidth: 1.5,
     borderColor: '#0D0D0D',
   },
-
-  // ── Truck ─────────────────────────────────────────────────────────────────
   truckWrap: {
     position: 'absolute',
     left: 247,
@@ -267,15 +277,12 @@ const styles = StyleSheet.create({
     height: 42,
     transform: [{ rotate: '-11.03deg' }],
   },
-  truckImg: {
-    width: '100%',
-    height: '100%',
-  },
+  truckImg: { width: '100%', height: '100%' },
 
   // ── Route card ─────────────────────────────────────────────────────────────
+  // Figma: top 42, left 19, width 343, height 118, borderRadius 16
   routeCard: {
     position: 'absolute',
-    top: 42,
     left: 19,
     width: 343,
     height: 118,
@@ -285,67 +292,64 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
-    elevation: 4,
+    elevation: 5,
     overflow: 'visible',
   },
-  routeTopRow: {
+  // Pick-up row — top section (0..57), paddingLeft 38 (15+23 connector offset)
+  rcPickRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    paddingLeft: 38,            // 15 (outer) + 23 (connector offset)
+    paddingLeft: 38,
     paddingRight: 15,
     paddingTop: 16,
-    paddingBottom: 14,
+    paddingBottom: 0,
+    height: 57,         // exact Figma header-section height
   },
-  routeDivider: {
+  rcDivider: {
     height: 0.5,
     backgroundColor: '#CDD5DF',
-    marginLeft: 0,
   },
-  routeBottomRow: {
+  // Drop-off row — bottom section (65..106), paddingLeft 38
+  rcDropRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
     paddingLeft: 38,
     paddingRight: 15,
     paddingTop: 12,
     paddingBottom: 12,
   },
-  routeLocInfo: {
-    flex: 1,
-    gap: 2,
-  },
-  routeLocLabel: {
+  rcLocBlock: { flex: 1, gap: 3 },
+  rcLocLabel: {
     fontFamily: FontFamily.regular,
     fontSize: 10,
     lineHeight: 16,
     color: '#697586',
     letterSpacing: 0.15,
   },
-  routeLocValue: {
+  rcLocValue: {
     fontFamily: FontFamily.medium,
     fontSize: 12,
     lineHeight: 16,
     color: '#0D121C',
   },
-  routeEta: {
-    alignItems: 'flex-end',
-    flexShrink: 0,
-    marginLeft: 8,
-  },
-  routeEtaDistance: {
+  rcEtaBlock: { alignItems: 'flex-end', flexShrink: 0, marginLeft: 8 },
+  rcEtaDist: {
     fontFamily: FontFamily.medium,
     fontSize: 14,
     lineHeight: 20,
     color: '#0D121C',
     textAlign: 'right',
   },
-  routeEtaTime: {
-    fontFamily: FontFamily.medium,
+  rcEtaTime: {
+    fontFamily: FontFamily.regular,
     fontSize: 10,
     lineHeight: 16,
     color: '#697586',
     textAlign: 'right',
   },
-  // Absolute connector image spanning across divider
-  routeConnector: {
+  // Connector SVG: absolute at left 23, top 37 — spans pick-up & drop-off dots
+  rcConnector: {
     position: 'absolute',
     left: 23,
     top: 37,
@@ -353,24 +357,25 @@ const styles = StyleSheet.create({
     height: 52,
   },
 
-  // ── Service info card ───────────────────────────────────────────────────────
+  // ── Service card ────────────────────────────────────────────────────────────
+  // Figma: left 17, width 343, height 200, borderRadius 16
   serviceCard: {
     position: 'absolute',
-    bottom: 95,
     left: 17,
     width: 343,
     height: 200,
     backgroundColor: Colors.white,
     borderRadius: 16,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: -2 },
+    shadowOffset: { width: 0, height: -1 },
     shadowOpacity: 0.08,
     shadowRadius: 8,
-    elevation: 4,
-    overflow: 'hidden',
+    elevation: 5,
   },
-  // Header section (height 57, with bottom border)
-  serviceHeader: {
+
+  // Header section — height 57, borderBottom 0.5 #CDD5DF
+  // Uses flex so text doesn't get cut; exact positions below matched via padding
+  scHeader: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     paddingLeft: 15,
@@ -378,122 +383,103 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     height: 57,
   },
-  serviceAvatar: {
+  scAvatar: {
     width: 36,
     height: 36,
     borderRadius: 18,
     marginTop: 2.5,
     flexShrink: 0,
   },
-  serviceNameBlock: {
+  scNameBlock: {
     flex: 1,
     marginLeft: 3,
     gap: 4,
   },
-  serviceName: {
+  scName: {
     fontFamily: FontFamily.medium,
     fontSize: 12,
     lineHeight: 16,
     color: '#0D121C',
   },
-  serviceRatingRow: {
+  scRatingRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
   },
-  starImg: {
-    width: 15,
-    height: 15,
-    flexShrink: 0,
-  },
-  serviceRatingText: {
+  scRatingText: {
     fontFamily: FontFamily.regular,
     fontSize: 10,
     lineHeight: 16,
     color: '#697586',
     letterSpacing: 0.15,
   },
-  serviceMovesText: {
+  scMovesText: {
     fontFamily: FontFamily.regular,
     fontSize: 10,
     lineHeight: 16,
     color: '#697586',
     letterSpacing: 0.15,
   },
-  serviceEtaBlock: {
-    alignItems: 'flex-end',
-    flexShrink: 0,
-    marginLeft: 8,
-  },
-  serviceEtaDist: {
+  scEtaBlock: { alignItems: 'flex-end', flexShrink: 0, marginLeft: 8 },
+  scEtaDist: {
     fontFamily: FontFamily.medium,
     fontSize: 14,
     lineHeight: 20,
     color: '#0D121C',
     textAlign: 'right',
   },
-  serviceEtaTime: {
+  scEtaTime: {
     fontFamily: FontFamily.regular,
     fontSize: 10,
     lineHeight: 16,
     color: '#697586',
     textAlign: 'right',
   },
-  headerDivider: {
-    height: 0.5,
-    backgroundColor: '#CDD5DF',
-  },
+  scDivider: { height: 0.5, backgroundColor: '#CDD5DF' },
 
-  // Vehicle row (top:57 → 20px below divider start = paddingTop:20)
-  vehicleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingLeft: 19,
-    paddingRight: 15,
-    paddingTop: 20,
-    paddingBottom: 0,
-  },
-  vehicleIconBox: {
+  // Vehicle section — absolute positions from Figma
+  // Icon box: left 19, top 77, 40×40, bg #E3E8EF, borderRadius 10
+  scVehicleBox: {
+    position: 'absolute',
+    left: 19,
+    top: 77,
     width: 40,
     height: 40,
     borderRadius: 10,
     backgroundColor: '#E3E8EF',
     alignItems: 'center',
     justifyContent: 'center',
-    flexShrink: 0,
   },
-  vehicleGroupImg: {
-    width: 20,
-    height: 20,
-  },
-  vehicleDetails: {
-    flex: 1,
-    marginLeft: 8,
-    gap: 2,
-  },
-  vehicleName: {
+  // "Mercedes Benz Sprinter": left 67, top 81
+  scVehicleName: {
+    position: 'absolute',
+    left: 67,
+    top: 81,
     fontFamily: FontFamily.medium,
     fontSize: 12,
     lineHeight: 16,
     color: '#0D121C',
   },
-  vehiclePlate: {
+  // "GW-12903-22": left 67, top 99
+  scVehiclePlate: {
+    position: 'absolute',
+    left: 67,
+    top: 99,
     fontFamily: FontFamily.regular,
     fontSize: 10,
     lineHeight: 16,
     color: '#697586',
   },
-  moversGroup: {
+  // Profile icon + "2 movers": right side, top ~88
+  scMoversGroup: {
+    position: 'absolute',
+    right: 15,
+    top: 88,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
-    flexShrink: 0,
   },
-  moversIcon: {
-    width: 15,
-    height: 15,
-  },
-  moversText: {
+  scMoversText: {
     fontFamily: FontFamily.regular,
     fontSize: 10,
     lineHeight: 16,
@@ -501,15 +487,12 @@ const styles = StyleSheet.create({
     letterSpacing: 0.15,
   },
 
-  // Call + Message buttons
-  actionRow: {
-    flexDirection: 'row',
-    paddingHorizontal: 12,
-    paddingTop: 14,
-    gap: 15,
-  },
-  actionBtn: {
-    flex: 1,
+  // Call button: left 12, top 137, width 153, height 50, borderRadius 40
+  scCallBtn: {
+    position: 'absolute',
+    left: 12,
+    top: 137,
+    width: 153,
     height: 50,
     borderRadius: 40,
     borderWidth: 1,
@@ -519,14 +502,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 16,
   },
-  actionBtnRight: {
-    // identical style, kept separate for future variant needs
+  // Message button: left 180, top 136, width 153, height 50, borderRadius 40
+  scMsgBtn: {
+    position: 'absolute',
+    left: 180,
+    top: 136,
+    width: 153,
+    height: 50,
+    borderRadius: 40,
+    borderWidth: 1,
+    borderColor: '#697586',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 16,
   },
-  actionIcon: {
-    width: 24,
-    height: 24,
-  },
-  actionBtnLabel: {
+  scBtnLabel: {
     fontFamily: FontFamily.semibold,
     fontSize: 16,
     lineHeight: 22.4,
@@ -536,7 +527,6 @@ const styles = StyleSheet.create({
   // ── Cancel Move button ──────────────────────────────────────────────────────
   cancelWrap: {
     position: 'absolute',
-    bottom: 29,
     left: 21,
     right: 19,
   },
@@ -546,7 +536,6 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 16,
   },
   cancelText: {
     fontFamily: FontFamily.bold,
@@ -554,23 +543,5 @@ const styles = StyleSheet.create({
     lineHeight: 22.4,
     color: Colors.white,
     textAlign: 'center',
-  },
-
-  // ── Home indicator ──────────────────────────────────────────────────────────
-  homeBar: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 24,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    paddingBottom: 8,
-  },
-  homePill: {
-    width: 134,
-    height: 5,
-    borderRadius: 100,
-    backgroundColor: Colors.white,
   },
 });
