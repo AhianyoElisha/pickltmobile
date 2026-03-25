@@ -1,0 +1,8 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="shopping-bag">
+<path id="Vector" d="M7.00002 5.41667H13C15.8334 5.41667 16.1167 6.74167 16.3084 8.35833L17.0584 14.6083C17.3 16.6583 16.6667 18.3333 13.75 18.3333H6.25835C3.33335 18.3333 2.70002 16.6583 2.95002 14.6083L3.70003 8.35833C3.88336 6.74167 4.16669 5.41667 7.00002 5.41667Z" stroke="var(--stroke-0, white)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_2" d="M6.66667 6.66667V3.75C6.66667 2.5 7.5 1.66667 8.75 1.66667H11.25C12.5 1.66667 13.3333 2.5 13.3333 3.75V6.66667" stroke="var(--stroke-0, white)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_3" d="M17.0083 14.1915H6.66667" stroke="var(--stroke-0, white)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_4" opacity="0" d="M19.5 0.5V19.5H0.5V0.5H19.5Z" stroke="var(--stroke-0, white)"/>
+</g>
+</svg>

@@ -206,7 +206,7 @@ export default function HomeScreen() {
             <InstantBookingForm
               onSearch={(data) => {
                 router.push({
-                  pathname: '/pickup-information',
+                  pathname: '/instant/pickup-information',
                   params: {
                     fromName: data.from.name,
                     fromAddress: data.from.address,

@@ -167,6 +167,30 @@ export function StarIcon({ size = 16 }: { size?: number }) {
   );
 }
 
+// ── Star outline icon (for interactive rating widget — unfilled/selected state) ─
+export function StarOutlineIcon({
+  color = '#697586',
+  fillColor,
+  size = 22,
+}: {
+  color?: string;
+  fillColor?: string;
+  size?: number;
+}) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill={fillColor ?? 'none'}
+      />
+    </Svg>
+  );
+}
+
 // ── Users / profile-2user icon ────────────────────────────────────────────────
 export function UsersIcon({
   color = '#fff',
@@ -369,6 +393,80 @@ export function PlusCircleIcon({
       <Path
         d="M16 4C9.37321 4 4 9.37321 4 16C4 22.6268 9.37321 28 16 28C22.6268 28 28 22.6268 28 16C28 9.37321 22.6268 4 16 4ZM21.1429 16.6429C21.1429 16.7607 21.0464 16.8571 20.9286 16.8571H16.8571V20.9286C16.8571 21.0464 16.7607 21.1429 16.6429 21.1429H15.3571C15.2393 21.1429 15.1429 21.0464 15.1429 20.9286V16.8571H11.0714C10.9536 16.8571 10.8571 16.7607 10.8571 16.6429V15.3571C10.8571 15.2393 10.9536 15.1429 11.0714 15.1429H15.1429V11.0714C15.1429 10.9536 15.2393 10.8571 15.3571 10.8571H16.6429C16.7607 10.8571 16.8571 10.9536 16.8571 11.0714V15.1429H20.9286C21.0464 15.1429 21.1429 15.2393 21.1429 15.3571V16.6429Z"
         fill={color}
+      />
+    </Svg>
+  );
+}
+
+// ── Box Add icon (vuesax/linear/box-add) — for loading/unloading status ──────
+export function BoxAddIcon({
+  color = '#697586',
+  size = 24,
+}: {
+  color?: string;
+  size?: number;
+}) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M9.93 2.48L4.59 5.45C3.38 6.12 2.39 7.8 2.39 9.18V14.83C2.39 16.21 3.38 17.89 4.59 18.56L9.93 21.53C11.07 22.16 12.94 22.16 14.08 21.53L19.42 18.56C20.63 17.89 21.62 16.21 21.62 14.83V9.18C21.62 7.8 20.63 6.12 19.42 5.45L14.08 2.48C12.93 1.84 11.07 1.84 9.93 2.48Z"
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <Path
+        d="M3.27 7.96L12 13.07L20.73 7.96"
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <Path
+        d="M12 22.08V13.06"
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <Path
+        d="M10 5.5V2.5M8.5 4H11.5"
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
+
+// ── Check circle (filled green, white tick) — for arrival/completion banners ──
+export function CheckCircleIcon({ size = 25 }: { size?: number }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 25 25" fill="none">
+      <Circle cx={12.5} cy={12.5} r={12.5} fill="#17B26A" />
+      <Path
+        d="M7.5 12.5L10.8 16L17.5 9.5"
+        stroke="white"
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
+
+// ── Verified mover badge (small blue circle with white tick) ───────────────────
+export function VerifiedBadgeIcon({ size = 14 }: { size?: number }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 14 14" fill="none">
+      <Circle cx={7} cy={7} r={7} fill="#1D64EC" />
+      <Path
+        d="M4 7L6.2 9.2L10.4 5"
+        stroke="white"
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </Svg>
   );
