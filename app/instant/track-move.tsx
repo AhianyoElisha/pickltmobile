@@ -75,7 +75,7 @@ export default function TrackMoveScreen() {
       <ServiceCard
         status={DEMO_STATUS}
         bottom={cardBottom}
-        onCall={() => { /* handle call */ }}
+        onCall={() => router.push('/instant/call' as any)}
         onMessage={() => { /* handle message */ }}
         onPaymentConfirmed={() => { /* handle payment confirmed */ }}
       />

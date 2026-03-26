@@ -472,6 +472,76 @@ export function VerifiedBadgeIcon({ size = 14 }: { size?: number }) {
   );
 }
 
+// ── Volume / Speaker icon — viewBox 0 0 24 24, stroke-based ─────────────────
+export function VolumeIcon({
+  color = '#fff',
+  size = 24,
+}: {
+  color?: string;
+  size?: number;
+}) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      {/* Speaker cone */}
+      <Path
+        d="M11 5L6 9H3C2.45 9 2 9.45 2 10V14C2 14.55 2.45 15 3 15H6L11 19V5Z"
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      {/* Short wave */}
+      <Path
+        d="M15.54 8.46a5 5 0 0 1 0 7.07"
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+      />
+      {/* Long wave */}
+      <Path
+        d="M19.07 4.93a10 10 0 0 1 0 14.14"
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+      />
+    </Svg>
+  );
+}
+
+// ── Microphone icon — viewBox 0 0 24 24, stroke-based ────────────────────────
+export function MicrophoneIcon({
+  color = '#fff',
+  size = 24,
+}: {
+  color?: string;
+  size?: number;
+}) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      {/* Capsule body */}
+      <Path
+        d="M12 2C10.34 2 9 3.34 9 5V12C9 13.66 10.34 15 12 15C13.66 15 15 13.66 15 12V5C15 3.34 13.66 2 12 2Z"
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      {/* Stand arc */}
+      <Path
+        d="M19 10V12C19 15.87 15.87 19 12 19C8.13 19 5 15.87 5 12V10"
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      {/* Post */}
+      <Path d="M12 19V22" stroke={color} strokeWidth={1.5} strokeLinecap="round" />
+      {/* Base */}
+      <Path d="M8 22H16" stroke={color} strokeWidth={1.5} strokeLinecap="round" />
+    </Svg>
+  );
+}
+
 // ── Route connector (filled dot → line → hollow dot) — viewBox 0 0 11 52 ─────
 // Extracted from Figma asset: assets/icons/route-connector.svg
 export function RouteConnectorIcon() {

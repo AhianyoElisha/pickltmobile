@@ -88,6 +88,14 @@ function RootNavigator() {
       <Stack.Screen name="instant/add-move-photos" />
       <Stack.Screen name="instant/select-mover" />
       <Stack.Screen name="instant/track-move" />
+      <Stack.Screen
+        name="instant/call"
+        options={{
+          presentation: 'transparentModal',
+          animation: 'none',
+          gestureEnabled: false,
+        }}
+      />
       <Stack.Screen name="scheduled-results" />
     </Stack>
   );
