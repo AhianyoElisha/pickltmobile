@@ -7,11 +7,9 @@ import {
 } from 'react-native';
 import { Colors, FontFamily } from '@/constants/theme';
 import { SwapIcon, TruckFieldIcon } from '@/components/ui/home-icons';
-import { DateField } from './date-field';
 import { LocationField } from './location-field';
 import { MoveTypeField } from './move-type-field';
-import { TimeField } from './time-field';
-import { LocationOption, MoveTypeOption, ScheduledBookingData, TimeSlot } from './types';
+import { LocationOption, MoveTypeOption, ScheduledBookingData } from './types';
 
 interface ScheduledBookingFormProps {
   onSearch: (data: ScheduledBookingData) => void;
@@ -21,8 +19,6 @@ export function ScheduledBookingForm({ onSearch }: ScheduledBookingFormProps) {
   const [from, setFrom] = useState<LocationOption | null>(null);
   const [to, setTo] = useState<LocationOption | null>(null);
   const [moveType, setMoveType] = useState<MoveTypeOption | null>(null);
-  const [date, setDate] = useState<string | null>(null);
-  const [timeSlot, setTimeSlot] = useState<TimeSlot | null>(null);
 
   function handleSwap() {
     const prev = from;
@@ -31,11 +27,11 @@ export function ScheduledBookingForm({ onSearch }: ScheduledBookingFormProps) {
   }
 
   function handleSearch() {
-    if (!from || !to || !moveType || !date || !timeSlot) return;
-    onSearch({ from, to, moveType, date, timeSlot });
+    if (!from || !to || !moveType) return;
+    onSearch({ from, to, moveType });
   }
 
-  const canSearch = Boolean(from && to && moveType && date && timeSlot);
+  const canSearch = Boolean(from && to && moveType);
 
   return (
     <View>
@@ -57,16 +53,8 @@ export function ScheduledBookingForm({ onSearch }: ScheduledBookingFormProps) {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.fieldWrap}>
+      <View style={styles.moveTypeWrap}>
         <MoveTypeField value={moveType} onChange={setMoveType} />
-      </View>
-
-      <View style={styles.fieldWrap}>
-        <DateField value={date} onChange={setDate} />
-      </View>
-
-      <View style={styles.fieldWrap}>
-        <TimeField value={timeSlot} onChange={setTimeSlot} />
       </View>
 
       <TouchableOpacity
@@ -97,7 +85,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  fieldWrap: {
+  moveTypeWrap: {
     marginTop: 15,
   },
   searchBtn: {

@@ -22,12 +22,4 @@ export interface ScheduledBookingData {
   from: LocationOption;
   to: LocationOption;
   moveType: MoveTypeOption;
-  date: string;    // ISO date string 'YYYY-MM-DD'
-  timeSlot: TimeSlot;
-}
-
-export interface TimeSlot {
-  id: string;
-  label: string;
-  range: string;
 }
