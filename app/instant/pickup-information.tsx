@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -7,7 +7,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withTiming,
+} from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import {
   ArrowLeftIcon,
@@ -73,6 +80,7 @@ const counter = StyleSheet.create({
 });
 
 export default function PickupInformationScreen() {
+  const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{
     fromName: string; fromAddress: string;
     toName: string; toAddress: string;
@@ -81,6 +89,39 @@ export default function PickupInformationScreen() {
 
   const [selectedCategory, setSelectedCategory] = useState<RoomCategory>('Living Room');
   const [counts, setCounts] = useState<Record<string, number>>({});
+
+  // ── Circular-reveal animation ───────────────────────────────────────────────
+  const revealScale    = useSharedValue(0);
+  const contentOpacity = useSharedValue(0);
+
+  const bgStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: revealScale.value }],
+  }));
+
+  const contentStyle = useAnimatedStyle(() => ({
+    opacity: contentOpacity.value,
+  }));
+
+  useEffect(() => {
+    revealScale.value = withTiming(1, {
+      duration: 520,
+      easing: Easing.out(Easing.cubic),
+    });
+    contentOpacity.value = withDelay(300, withTiming(1, { duration: 220 }));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleBack = () => {
+    contentOpacity.value = withTiming(0, { duration: 150 });
+    revealScale.value = withTiming(
+      0,
+      { duration: 380, easing: Easing.in(Easing.cubic) },
+      () => {
+        'worklet';
+        router.back();
+      },
+    );
+  };
 
   function getCount(key: string) { return counts[key] ?? 0; }
   function adjust(key: string, delta: number) {
@@ -102,102 +143,115 @@ export default function PickupInformationScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()} activeOpacity={0.8}>
-          <ArrowLeftIcon size={20} color="#fff" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Pick Up Information</Text>
-        <View style={styles.headerSpacer} />
-      </View>
+    <View style={styles.overlay}>
+      {/* ── Expanding white circle — circular reveal ──────────────────────── */}
+      <Animated.View style={[StyleSheet.absoluteFill, styles.whiteBg, bgStyle]} />
 
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <View style={styles.mapCard}>
-          <View style={styles.mapPlaceholder}>
-            <Text style={styles.mapPlaceholderText}>Map Preview</Text>
-            <TouchableOpacity style={styles.gpsBtn} activeOpacity={0.8}>
-              <GpsTargetIcon size={24} color={Colors.primary} />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.locationPanel}>
-            <View style={styles.locationIcons}>
-              <PickupPinIcon size={24} color={Colors.textSecondary} />
-              <RouteDirectionIcon size={24} color={Colors.textSecondary} />
-            </View>
-            <View style={styles.locationTexts}>
-              <Text style={styles.locationText} numberOfLines={1}>{params.fromName || 'Pick up location'}</Text>
-              <View style={styles.locationDivider} />
-              <Text style={styles.locationText} numberOfLines={1}>{params.toName || 'Drop off location'}</Text>
-            </View>
-          </View>
+      {/* ── Screen content ────────────────────────────────────────────────── */}
+      <Animated.View style={[StyleSheet.absoluteFill, styles.content, contentStyle]}>
+        <View style={[styles.header, { paddingTop: insets.top + 4 }]}>
+          <TouchableOpacity style={styles.backBtn} onPress={handleBack} activeOpacity={0.8}>
+            <ArrowLeftIcon size={20} color="#fff" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Pick Up Information</Text>
+          <View style={styles.headerSpacer} />
         </View>
 
-        <Text style={styles.sectionTitle}>Edit Pick Up And Drop off Points from the map</Text>
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.mapCard}>
+            <View style={styles.mapPlaceholder}>
+              <Text style={styles.mapPlaceholderText}>Map Preview</Text>
+              <TouchableOpacity style={styles.gpsBtn} activeOpacity={0.8}>
+                <GpsTargetIcon size={24} color={Colors.primary} />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.locationPanel}>
+              <View style={styles.locationIcons}>
+                <PickupPinIcon size={24} color={Colors.textSecondary} />
+                <RouteDirectionIcon size={24} color={Colors.textSecondary} />
+              </View>
+              <View style={styles.locationTexts}>
+                <Text style={styles.locationText} numberOfLines={1}>{params.fromName || 'Pick up location'}</Text>
+                <View style={styles.locationDivider} />
+                <Text style={styles.locationText} numberOfLines={1}>{params.toName || 'Drop off location'}</Text>
+              </View>
+            </View>
+          </View>
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoryRow}>
-          {ROOM_CATEGORIES.map((cat) => (
-            <TouchableOpacity
-              key={cat}
-              style={[styles.chip, selectedCategory === cat && styles.chipActive]}
-              onPress={() => setSelectedCategory(cat)}
-              activeOpacity={0.8}>
-              <Text style={[styles.chipLabel, selectedCategory === cat && styles.chipLabelActive]}>{cat}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+          <Text style={styles.sectionTitle}>Edit Pick Up And Drop off Points from the map</Text>
 
-        <View style={styles.itemList}>
-          {currentItems.map((item) => {
-            const key = itemKey(selectedCategory, item);
-            return (
-              <CounterRow key={key} label={item} count={getCount(key)}
-                onDecrement={() => adjust(key, -1)} onIncrement={() => adjust(key, 1)} />
-            );
-          })}
-        </View>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoryRow}>
+            {ROOM_CATEGORIES.map((cat) => (
+              <TouchableOpacity
+                key={cat}
+                style={[styles.chip, selectedCategory === cat && styles.chipActive]}
+                onPress={() => setSelectedCategory(cat)}
+                activeOpacity={0.8}>
+                <Text style={[styles.chipLabel, selectedCategory === cat && styles.chipLabelActive]}>{cat}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
 
-        <View style={styles.sectionBlock}>
-          <Text style={styles.sectionHeading}>Special Items</Text>
-          <Text style={styles.sectionSubtitle}>These items require special handling and may affect pricing.</Text>
-          <View style={[styles.itemList, styles.itemListBorder]}>
-            {SPECIAL_ITEMS.map((item) => {
-              const key = itemKey('special', item);
+          <View style={styles.itemList}>
+            {currentItems.map((item) => {
+              const key = itemKey(selectedCategory, item);
               return (
                 <CounterRow key={key} label={item} count={getCount(key)}
                   onDecrement={() => adjust(key, -1)} onIncrement={() => adjust(key, 1)} />
               );
             })}
           </View>
-        </View>
 
-        <View style={styles.sectionBlock}>
-          <Text style={styles.sectionHeading}>Custom Items</Text>
-          <Text style={styles.sectionSubtitle}>No custom items added yet. Click the button below to add items not listed.</Text>
-          <TouchableOpacity style={styles.addCustomBtn} activeOpacity={0.8}>
-            <PlusIcon size={16} color={Colors.textPrimary} />
-            <Text style={styles.addCustomText}>Add Custom Items</Text>
+          <View style={styles.sectionBlock}>
+            <Text style={styles.sectionHeading}>Special Items</Text>
+            <Text style={styles.sectionSubtitle}>These items require special handling and may affect pricing.</Text>
+            <View style={[styles.itemList, styles.itemListBorder]}>
+              {SPECIAL_ITEMS.map((item) => {
+                const key = itemKey('special', item);
+                return (
+                  <CounterRow key={key} label={item} count={getCount(key)}
+                    onDecrement={() => adjust(key, -1)} onIncrement={() => adjust(key, 1)} />
+                );
+              })}
+            </View>
+          </View>
+
+          <View style={styles.sectionBlock}>
+            <Text style={styles.sectionHeading}>Custom Items</Text>
+            <Text style={styles.sectionSubtitle}>No custom items added yet. Click the button below to add items not listed.</Text>
+            <TouchableOpacity style={styles.addCustomBtn} activeOpacity={0.8}>
+              <PlusIcon size={16} color={Colors.textPrimary} />
+              <Text style={styles.addCustomText}>Add Custom Items</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={{ height: 20 }} />
+        </ScrollView>
+
+        <View style={[styles.footer, { paddingBottom: insets.bottom + 8 }]}>
+          <TouchableOpacity style={styles.nextBtn} activeOpacity={0.85} onPress={handleNext}>
+            <Text style={styles.nextText}>Next</Text>
           </TouchableOpacity>
         </View>
-
-        <View style={{ height: 20 }} />
-      </ScrollView>
-
-      <View style={styles.footer}>
-        <TouchableOpacity style={styles.nextBtn} activeOpacity={0.85} onPress={handleNext}>
-          <Text style={styles.nextText}>Next</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+      </Animated.View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: Colors.background },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingVertical: 12 },
+  overlay: { flex: 1, backgroundColor: 'transparent' },
+  whiteBg:  { backgroundColor: Colors.background },
+  content:  { flex: 1 },
+
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingBottom: 12, backgroundColor: Colors.background },
   backBtn: { width: 48, height: 48, borderRadius: 9999, backgroundColor: Colors.primary, alignItems: 'center', justifyContent: 'center' },
   headerTitle: { fontFamily: FontFamily.bold, fontSize: 18, lineHeight: 25.2, color: Colors.textPrimary, textAlign: 'center', flex: 1 },
   headerSpacer: { width: 48 },
-  scroll: { flex: 1 },
+  scroll: { flex: 1, backgroundColor: Colors.background },
   scrollContent: { paddingHorizontal: 20, paddingBottom: 16, gap: 12 },
   mapCard: { borderRadius: 16, overflow: 'hidden', borderWidth: 0.5, borderColor: Colors.textSecondary },
   mapPlaceholder: { height: 200, backgroundColor: '#E8EDF2', alignItems: 'center', justifyContent: 'center' },
@@ -221,7 +275,7 @@ const styles = StyleSheet.create({
   sectionSubtitle: { fontFamily: FontFamily.medium, fontSize: 14, lineHeight: 19.6, color: Colors.textSecondary, marginBottom: 4 },
   addCustomBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12, borderWidth: 1.5, borderColor: Colors.textPrimary, borderRadius: 100, paddingVertical: 14, paddingHorizontal: 24, alignSelf: 'flex-start' },
   addCustomText: { fontFamily: FontFamily.semibold, fontSize: 16, lineHeight: 22.4, color: Colors.textPrimary },
-  footer: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 8, backgroundColor: Colors.white },
+  footer: { paddingHorizontal: 20, paddingTop: 16, backgroundColor: Colors.white },
   nextBtn: { height: 56, backgroundColor: Colors.primary, borderRadius: 40, alignItems: 'center', justifyContent: 'center' },
   nextText: { fontFamily: FontFamily.semibold, fontSize: 16, lineHeight: 22.4, color: Colors.white },
 });
