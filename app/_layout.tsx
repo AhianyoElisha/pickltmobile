@@ -84,12 +84,35 @@ function RootNavigator() {
         }}
       />
       <Stack.Screen name="move-details" />
-      <Stack.Screen name="instant/pickup-information" />
+      <Stack.Screen
+        name="instant/pickup-information"
+        options={{
+          presentation: 'transparentModal',
+          animation: 'none',
+          gestureEnabled: false,
+        }}
+      />
       <Stack.Screen name="instant/add-move-photos" />
       <Stack.Screen name="instant/select-mover" />
       <Stack.Screen name="instant/track-move" />
       <Stack.Screen
-        name="instant/call"
+        name="scheduled/pickup-information"
+        options={{
+          presentation: 'transparentModal',
+          animation: 'none',
+          gestureEnabled: false,
+        }}
+      />
+      <Stack.Screen
+        name="shared/call"
+        options={{
+          presentation: 'transparentModal',
+          animation: 'none',
+          gestureEnabled: false,
+        }}
+      />
+      <Stack.Screen
+        name="shared/message"
         options={{
           presentation: 'transparentModal',
           animation: 'none',

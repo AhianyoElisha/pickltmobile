@@ -2,6 +2,12 @@ import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import RouteInfoCard from '@/components/RouteInfoCard';
@@ -26,6 +32,23 @@ export default function TrackMoveScreen() {
   const cancelBottom = insets.bottom + 8;
   // Service card sits cancel(52) + gap(14) above cancel button
   const cardBottom   = cancelBottom + 52 + 14;
+
+  // ── Exit animation — white circle expands to cover map, then navigate home ──
+  const cancelRevealScale = useSharedValue(0);
+  const cancelBgStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: cancelRevealScale.value }],
+  }));
+
+  const handleCancelMove = () => {
+    cancelRevealScale.value = withTiming(
+      1,
+      { duration: 520, easing: Easing.out(Easing.cubic) },
+      () => {
+        'worklet';
+        router.replace('/(tabs)');
+      },
+    );
+  };
 
   return (
     <View style={styles.root}>
@@ -75,8 +98,8 @@ export default function TrackMoveScreen() {
       <ServiceCard
         status={DEMO_STATUS}
         bottom={cardBottom}
-        onCall={() => router.push('/instant/call' as any)}
-        onMessage={() => { /* handle message */ }}
+        onCall={() => router.push('/shared/call' as any)}
+        onMessage={() => router.push('/shared/message' as any)}
         onPaymentConfirmed={() => { /* handle payment confirmed */ }}
       />
 
@@ -85,11 +108,17 @@ export default function TrackMoveScreen() {
         <TouchableOpacity
           style={styles.cancelBtn}
           activeOpacity={0.85}
-          onPress={() => router.replace('/(tabs)')}
+          onPress={handleCancelMove}
         >
           <Text style={styles.cancelText}>Cancel Move</Text>
         </TouchableOpacity>
       </View>
+
+      {/* ── Exit reveal overlay — white circle that expands on cancel ─────── */}
+      <Animated.View
+        style={[StyleSheet.absoluteFill, styles.cancelRevealBg, cancelBgStyle]}
+        pointerEvents="none"
+      />
     </View>
   );
 }
@@ -188,5 +217,10 @@ const styles = StyleSheet.create({
     lineHeight: 22.4,
     color: Colors.white,
     textAlign: 'center',
+  },
+
+  // ── Cancel exit reveal ──────────────────────────────────────────────────────
+  cancelRevealBg: {
+    backgroundColor: Colors.background,
   },
 });
