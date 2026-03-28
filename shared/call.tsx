@@ -1,7 +1,6 @@
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
-  Dimensions,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -27,13 +26,6 @@ import {
 } from '@/components/ui/pickup-icons';
 import { FontFamily } from '@/constants/theme';
 
-const { height: SH } = Dimensions.get('window');
-
-// The call button sits roughly 78% down the screen.
-// To make the expand animation originate from there we shift the
-// transform-origin by (78% − 50%) = 28% of screen height below centre.
-const REVEAL_DY = SH * 0.28;
-
 export default function CallScreen() {
   const insets = useSafeAreaInsets();
 
@@ -41,13 +33,8 @@ export default function CallScreen() {
   const revealScale = useSharedValue(0);
   const contentOpacity = useSharedValue(0);
 
-  // Translate → scale → un-translate  shifts the transform origin downward
   const bgStyle = useAnimatedStyle(() => ({
-    transform: [
-      { translateY: REVEAL_DY },
-      { scale: revealScale.value },
-      { translateY: -REVEAL_DY },
-    ],
+    transform: [{ scale: revealScale.value }],
   }));
 
   const contentStyle = useAnimatedStyle(() => ({
@@ -82,15 +69,12 @@ export default function CallScreen() {
   const ss = String(elapsed % 60).padStart(2, '0');
 
   // ── Ripple animations ───────────────────────────────────────────────────────
-  // Two outer rings pulse in scale + opacity with a 500 ms phase offset,
-  // simulating voice / audio activity.
   const r1Scale   = useSharedValue(1);
   const r1Opacity = useSharedValue(0.12);
   const r2Scale   = useSharedValue(1);
   const r2Opacity = useSharedValue(0.25);
 
   useEffect(() => {
-    // Outer ring — slow pulse
     r1Scale.value = withRepeat(
       withSequence(
         withTiming(1.07, { duration: 1300, easing: Easing.inOut(Easing.sin) }),
@@ -105,8 +89,6 @@ export default function CallScreen() {
       ),
       -1,
     );
-
-    // Second ring — faster, staggered 500 ms
     r2Scale.value = withDelay(
       500,
       withRepeat(
@@ -145,7 +127,7 @@ export default function CallScreen() {
       {/* ── Expanding white circle — circular reveal ──────────────────────── */}
       <Animated.View style={[StyleSheet.absoluteFill, styles.whiteBg, bgStyle]} />
 
-      {/* ── Screen content (fades in after bg covers the screen) ──────────── */}
+      {/* ── Screen content ────────────────────────────────────────────────── */}
       <Animated.View style={[StyleSheet.absoluteFill, contentStyle]}>
 
         {/* Header ─────────────────────────────────────────────────────────── */}
@@ -160,19 +142,18 @@ export default function CallScreen() {
 
           <Text style={styles.title}>Audio Call</Text>
 
-          {/* Invisible right element keeps title perfectly centred */}
-          <View style={styles.backBtn} />
+          {/* Plain spacer — same width as back button to keep title centred */}
+          <View style={styles.headerSpacer} />
         </View>
 
-        {/* Ripple section ─────────────────────────────────────────────────── */}
-        {/* Mirrors Figma: left:61, top:calc(50%-49px), width:254          */}
-        <View style={styles.rippleSection}>
+        {/* Caller section — flex centred in remaining space ───────────────── */}
+        <View style={[styles.callerSection, { paddingBottom: insets.bottom + 44 + 72 + 44 }]}>
 
-          {/* 254×247 container for the four concentric rings */}
+          {/* Concentric ripple rings + avatar */}
           <View style={styles.imageBox}>
-            {/* Ring 1 — outermost, very light (254×247) */}
+            {/* Ring 1 — outermost (254×254) */}
             <Animated.View style={[styles.ring1, r1Style]} />
-            {/* Ring 2 — medium (200×195) */}
+            {/* Ring 2 — middle (200×200) */}
             <Animated.View style={[styles.ring2, r2Style]} />
             {/* Ring 3 — solid brand blue (144×144) */}
             <View style={styles.ring3} />
@@ -180,7 +161,7 @@ export default function CallScreen() {
             <View style={styles.avatar} />
           </View>
 
-          {/* Name + timer ──────────────────────────────────────────────── */}
+          {/* Name + timer */}
           <View style={styles.textBlock}>
             <Text style={styles.name}>Angela Mellinger</Text>
             <Text style={styles.timerText}>{mm}:{ss}</Text>
@@ -194,13 +175,15 @@ export default function CallScreen() {
             <VolumeIcon color="#fff" size={24} />
           </TouchableOpacity>
 
-          {/* End call */}
+          {/* End call — phone icon rotated 135° to signal hang-up */}
           <TouchableOpacity
             style={styles.actionEnd}
             activeOpacity={0.8}
             onPress={handleBack}
           >
-            <CallIcon color="#fff" size={28} />
+            <View style={styles.endCallIconWrapper}>
+              <CallIcon color="#fff" size={28} />
+            </View>
           </TouchableOpacity>
 
           {/* Microphone */}
@@ -239,6 +222,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  // Invisible spacer — no background, keeps title centred
+  headerSpacer: {
+    width: 48,
+    height: 48,
+  },
   title: {
     flex: 1,
     fontFamily: FontFamily.bold,
@@ -248,47 +236,41 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  // ── Ripple ───────────────────────────────────────────────────────────────────
-  // Matches Figma: left:61, top:calc(50%-49px), width:254
-  rippleSection: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: '50%',
-    marginTop: -49,
+  // ── Caller section — vertically centred between header and action bar ────────
+  callerSection: {
+    flex: 1,
     alignItems: 'center',
+    justifyContent: 'center',
     gap: 18,
   },
+
+  // 254×254 container for the four concentric rings
   imageBox: {
     width: 254,
-    height: 247,
+    height: 254,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
-  // Outermost ring  — 254×247, centred in imageBox
+  // Outermost ring  — 254×254
   ring1: {
     position: 'absolute',
-    left: 0,
-    top: 0,
     width: 254,
-    height: 247,
+    height: 254,
     borderRadius: 127,
     backgroundColor: 'rgba(29,100,236,0.15)',
   },
-  // Second ring — 200×195
+  // Second ring — 200×200
   ring2: {
     position: 'absolute',
-    left: 27,
-    top: 26,
     width: 200,
-    height: 195,
+    height: 200,
     borderRadius: 100,
     backgroundColor: 'rgba(29,100,236,0.28)',
   },
   // Solid blue ring — 144×144
   ring3: {
     position: 'absolute',
-    left: 55,
-    top: 51,
     width: 144,
     height: 144,
     borderRadius: 72,
@@ -296,9 +278,6 @@ const styles = StyleSheet.create({
   },
   // Avatar placeholder — 80×80
   avatar: {
-    position: 'absolute',
-    left: 87,
-    top: 84,
     width: 80,
     height: 80,
     borderRadius: 40,
@@ -350,5 +329,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#E53051',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  // Rotate the phone icon 135° to represent "end call" (hang-up gesture)
+  endCallIconWrapper: {
+    transform: [{ rotate: '135deg' }],
   },
 });
