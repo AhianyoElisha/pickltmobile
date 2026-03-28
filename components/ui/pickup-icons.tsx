@@ -542,6 +542,96 @@ export function MicrophoneIcon({
   );
 }
 
+// ── Send icon (paper-plane) — viewBox 0 0 24 24, stroke-based ───────────────
+export function SendIcon({
+  color = '#fff',
+  size = 20,
+}: {
+  color?: string;
+  size?: number;
+}) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M22 2L11 13"
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <Path
+        d="M22 2L15 22L11 13L2 9L22 2Z"
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
+
+// ── Smile / Emoji icon — viewBox 0 0 24 24, stroke-based ────────────────────
+export function SmileIcon({
+  color = '#9AA4B2',
+  size = 24,
+}: {
+  color?: string;
+  size?: number;
+}) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <Path
+        d="M8.5 14C8.5 14 9.5 16 12 16C14.5 16 15.5 14 15.5 14"
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      {/* Eyes */}
+      <Path
+        d="M9 10H9.01"
+        stroke={color}
+        strokeWidth={2}
+        strokeLinecap="round"
+      />
+      <Path
+        d="M15 10H15.01"
+        stroke={color}
+        strokeWidth={2}
+        strokeLinecap="round"
+      />
+    </Svg>
+  );
+}
+
+// ── Attachment / Paperclip icon — viewBox 0 0 24 24, stroke-based ────────────
+export function AttachmentIcon({
+  color = '#9AA4B2',
+  size = 24,
+}: {
+  color?: string;
+  size?: number;
+}) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M21.44 11.05L12.25 20.24C11.1242 21.3658 9.59723 21.9983 8.005 21.9983C6.41277 21.9983 4.88584 21.3658 3.76 20.24C2.63416 19.1142 2.00166 17.5872 2.00166 15.995C2.00166 14.4028 2.63416 12.8758 3.76 11.75L12.33 3.18C13.0858 2.42412 14.1084 2.00018 15.175 2.00018C16.2416 2.00018 17.2642 2.42412 18.02 3.18C18.7759 3.93589 19.1998 4.95843 19.1998 6.025C19.1998 7.09157 18.7759 8.11411 18.02 8.87L9.41 17.46C9.03214 17.8379 8.52072 18.0498 7.9875 18.0498C7.45428 18.0498 6.94286 17.8379 6.565 17.46C6.18714 17.0821 5.97518 16.5707 5.97518 16.0375C5.97518 15.5043 6.18714 14.9929 6.565 14.615L15.07 6.11"
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
+
 // ── Route connector (filled dot → line → hollow dot) — viewBox 0 0 11 52 ─────
 // Extracted from Figma asset: assets/icons/route-connector.svg
 export function RouteConnectorIcon() {
