@@ -95,14 +95,9 @@ function RootNavigator() {
       <Stack.Screen name="instant/add-move-photos" />
       <Stack.Screen name="instant/select-mover" />
       <Stack.Screen name="instant/track-move" />
-      <Stack.Screen
-        name="scheduled/pickup-information"
-        options={{
-          presentation: 'transparentModal',
-          animation: 'none',
-          gestureEnabled: false,
-        }}
-      />
+      <Stack.Screen name="scheduled/move-overview" />
+      <Stack.Screen name="scheduled/pickup-information" />
+      <Stack.Screen name="scheduled/drop-off-information" />
       <Stack.Screen
         name="shared/call"
         options={{
