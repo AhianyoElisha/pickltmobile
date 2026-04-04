@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, {
   Easing,
+  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
@@ -39,13 +40,15 @@ export default function TrackMoveScreen() {
     transform: [{ scale: cancelRevealScale.value }],
   }));
 
+  const replaceToTabs = () => router.replace('/(tabs)');
+
   const handleCancelMove = () => {
     cancelRevealScale.value = withTiming(
       1,
       { duration: 520, easing: Easing.out(Easing.cubic) },
       () => {
         'worklet';
-        router.replace('/(tabs)');
+        runOnJS(replaceToTabs)();
       },
     );
   };

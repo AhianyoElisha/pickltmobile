@@ -1,19 +1,29 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams, useNavigation, useFocusEffect } from 'expo-router';
+import { useCallback, useRef } from 'react';
 import {
+  Dimensions,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
+import Animated, {
+  Easing,
+  runOnJS,
+  runOnUI,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import {
   ArrowLeftIcon,
   CameraIcon,
   GalleryAddIcon,
-  GpsTargetIcon,
 } from '@/components/ui/pickup-icons';
+import { MapCard } from '@/components/ui/map-card';
 import { Colors, FontFamily } from '@/constants/theme';
 
 export default function AddMovePhotosScreen() {
@@ -23,6 +33,34 @@ export default function AddMovePhotosScreen() {
     moveType: string; moveTypeId: string;
   }>();
 
+  const navigation = useNavigation();
+  const slideX = useSharedValue(0);
+  const slideStyle = useAnimatedStyle(() => ({ transform: [{ translateX: slideX.value }] }));
+  const goBack = () => router.back();
+  const handleBack = () => {
+    navigation.setOptions({ animation: 'none' });
+    slideX.value = withTiming(Dimensions.get('window').width, {
+      duration: 280,
+      easing: Easing.in(Easing.cubic),
+    }, () => {
+      'worklet';
+      runOnJS(goBack)();
+    });
+  };
+
+  // ── Slide-in on return from forward screen ──────────────────────────────────
+  const hasBeenFocused = useRef(false);
+  useFocusEffect(useCallback(() => {
+    if (!hasBeenFocused.current) { hasBeenFocused.current = true; return; }
+    const width = Dimensions.get('window').width;
+    runOnUI((w: number) => {
+      'worklet';
+      slideX.value = -w;
+      slideX.value = withTiming(0, { duration: 220, easing: Easing.out(Easing.cubic) });
+    })(width);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []));
+
   function handleNext() {
     router.push({
       pathname: '/instant/select-mover',
@@ -31,9 +69,10 @@ export default function AddMovePhotosScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
+    <Animated.View style={[styles.safe, slideStyle]}>
+      <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom']}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()} activeOpacity={0.8}>
+        <TouchableOpacity style={styles.backBtn} onPress={handleBack} activeOpacity={0.8}>
           <ArrowLeftIcon size={20} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Add Move Photos</Text>
@@ -41,14 +80,7 @@ export default function AddMovePhotosScreen() {
       </View>
 
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <View style={styles.mapCard}>
-          <View style={styles.mapPlaceholder}>
-            <Text style={styles.mapPlaceholderText}>Map Preview</Text>
-            <TouchableOpacity style={styles.gpsBtn} activeOpacity={0.8}>
-              <GpsTargetIcon size={24} color={Colors.primary} />
-            </TouchableOpacity>
-          </View>
-        </View>
+        <MapCard hideLocationPanel />
 
         <Text style={styles.pageHeading}>Add Move Photos</Text>
 
@@ -81,7 +113,8 @@ export default function AddMovePhotosScreen() {
           <Text style={styles.nextText}>Next</Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </Animated.View>
   );
 }
 
@@ -93,10 +126,6 @@ const styles = StyleSheet.create({
   headerSpacer: { width: 48 },
   scroll: { flex: 1 },
   scrollContent: { paddingHorizontal: 20, paddingBottom: 16, gap: 12 },
-  mapCard: { borderRadius: 16, overflow: 'hidden', borderWidth: 0.5, borderColor: Colors.textSecondary },
-  mapPlaceholder: { height: 200, backgroundColor: '#E8EDF2', alignItems: 'center', justifyContent: 'center' },
-  mapPlaceholderText: { fontFamily: FontFamily.regular, fontSize: 14, color: Colors.textSecondary },
-  gpsBtn: { position: 'absolute', right: 12, bottom: 12, width: 48, height: 48, borderRadius: 9999, backgroundColor: Colors.white, alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.15, shadowRadius: 4, elevation: 3 },
   pageHeading: { fontFamily: FontFamily.medium, fontSize: 20, lineHeight: 28, color: Colors.textPrimary, textAlign: 'center' },
   infoCard: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, backgroundColor: Colors.white, borderWidth: 1, borderColor: Colors.textSecondary, borderRadius: 8, paddingVertical: 8, paddingHorizontal: 12 },
   infoText: { flex: 1, fontFamily: FontFamily.regular, fontSize: 13, lineHeight: 18.2, color: Colors.textSecondary },

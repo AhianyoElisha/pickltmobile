@@ -1,12 +1,20 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import { useState } from 'react';
 import {
+  Dimensions,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
+import Animated, {
+  Easing,
+  runOnJS,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import {
@@ -288,6 +296,21 @@ export default function SelectMoverScreen() {
 
   const [selectedMoverId, setSelectedMoverId] = useState<string>(MOVERS[0].id);
 
+  const navigation = useNavigation();
+  const slideX = useSharedValue(0);
+  const slideStyle = useAnimatedStyle(() => ({ transform: [{ translateX: slideX.value }] }));
+  const goBack = () => router.back();
+  const handleBack = () => {
+    navigation.setOptions({ animation: 'none' });
+    slideX.value = withTiming(Dimensions.get('window').width, {
+      duration: 280,
+      easing: Easing.in(Easing.cubic),
+    }, () => {
+      'worklet';
+      runOnJS(goBack)();
+    });
+  };
+
   function handleNext() {
     router.push({
       pathname: '/instant/track-move',
@@ -296,10 +319,11 @@ export default function SelectMoverScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
+    <Animated.View style={[styles.safe, slideStyle]}>
+      <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom']}>
       {/* ── Header ── */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()} activeOpacity={0.8}>
+        <TouchableOpacity style={styles.backBtn} onPress={handleBack} activeOpacity={0.8}>
           <ArrowLeftIcon size={20} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Select Mover</Text>
@@ -336,7 +360,8 @@ export default function SelectMoverScreen() {
           <Text style={styles.nextText}>Next</Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </Animated.View>
   );
 }
 

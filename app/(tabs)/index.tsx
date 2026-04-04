@@ -222,7 +222,7 @@ export default function HomeScreen() {
             <ScheduledBookingForm
               onSearch={(data) => {
                 router.push({
-                  pathname: '/scheduled/pickup-information' as any,
+                  pathname: '/scheduled/move-overview' as any,
                   params: {
                     fromName: data.from.name,
                     fromAddress: data.from.address,

@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import Animated, {
   Easing,
+  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withDelay,
@@ -18,13 +19,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import {
   ArrowLeftIcon,
-  GpsTargetIcon,
   MinusCircleIcon,
-  PickupPinIcon,
   PlusCircleIcon,
   PlusIcon,
-  RouteDirectionIcon,
 } from '@/components/ui/pickup-icons';
+import { MapCard } from '@/components/ui/map-card';
 import { Colors, FontFamily } from '@/constants/theme';
 
 function MinusBtn({ onPress }: { onPress: () => void }) {
@@ -111,6 +110,8 @@ export default function PickupInformationScreen() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const goBack = () => router.back();
+
   const handleBack = () => {
     contentOpacity.value = withTiming(0, { duration: 150 });
     revealScale.value = withTiming(
@@ -118,7 +119,7 @@ export default function PickupInformationScreen() {
       { duration: 380, easing: Easing.in(Easing.cubic) },
       () => {
         'worklet';
-        router.back();
+        runOnJS(goBack)();
       },
     );
   };
@@ -162,25 +163,7 @@ export default function PickupInformationScreen() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.mapCard}>
-            <View style={styles.mapPlaceholder}>
-              <Text style={styles.mapPlaceholderText}>Map Preview</Text>
-              <TouchableOpacity style={styles.gpsBtn} activeOpacity={0.8}>
-                <GpsTargetIcon size={24} color={Colors.primary} />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.locationPanel}>
-              <View style={styles.locationIcons}>
-                <PickupPinIcon size={24} color={Colors.textSecondary} />
-                <RouteDirectionIcon size={24} color={Colors.textSecondary} />
-              </View>
-              <View style={styles.locationTexts}>
-                <Text style={styles.locationText} numberOfLines={1}>{params.fromName || 'Pick up location'}</Text>
-                <View style={styles.locationDivider} />
-                <Text style={styles.locationText} numberOfLines={1}>{params.toName || 'Drop off location'}</Text>
-              </View>
-            </View>
-          </View>
+          <MapCard fromName={params.fromName} toName={params.toName} />
 
           <Text style={styles.sectionTitle}>Edit Pick Up And Drop off Points from the map</Text>
 
@@ -253,15 +236,6 @@ const styles = StyleSheet.create({
   headerSpacer: { width: 48 },
   scroll: { flex: 1, backgroundColor: Colors.background },
   scrollContent: { paddingHorizontal: 20, paddingBottom: 16, gap: 12 },
-  mapCard: { borderRadius: 16, overflow: 'hidden', borderWidth: 0.5, borderColor: Colors.textSecondary },
-  mapPlaceholder: { height: 200, backgroundColor: '#E8EDF2', alignItems: 'center', justifyContent: 'center' },
-  mapPlaceholderText: { fontFamily: FontFamily.regular, fontSize: 14, color: Colors.textSecondary },
-  gpsBtn: { position: 'absolute', right: 12, bottom: 12, width: 48, height: 48, borderRadius: 9999, backgroundColor: Colors.white, alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.15, shadowRadius: 4, elevation: 3 },
-  locationPanel: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 14, paddingVertical: 14, backgroundColor: Colors.white },
-  locationIcons: { alignItems: 'center', justifyContent: 'space-between', height: 62 },
-  locationTexts: { flex: 1, gap: 16 },
-  locationText: { fontFamily: FontFamily.medium, fontSize: 16, lineHeight: 22.4, color: Colors.textSecondary },
-  locationDivider: { height: 0.5, backgroundColor: Colors.textSecondary, width: '100%' },
   sectionTitle: { fontFamily: FontFamily.medium, fontSize: 14, lineHeight: 19.6, color: Colors.textPrimary },
   categoryRow: { flexDirection: 'row', gap: 10, paddingRight: 4 },
   chip: { height: 44, paddingHorizontal: 24, borderRadius: 100, alignItems: 'center', justifyContent: 'center', backgroundColor: '#111' },
