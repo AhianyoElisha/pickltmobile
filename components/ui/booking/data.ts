@@ -53,3 +53,7 @@ export const TIME_SLOTS: TimeSlot[] = [
   { id: 'afternoon', label: 'Afternoon', range: '12:00 PM – 5:00 PM' },
   { id: 'evening', label: 'Evening', range: '5:00 PM – 9:00 PM' },
 ];
+
+export const BUILDING_TYPES = ['Apartment', 'House', 'Office', 'Storage', 'Other'] as const;
+export const FLOOR_LEVELS = ['Ground Floor', '1st Floor', '2nd Floor', '3rd Floor', '4th Floor', '5th+ Floor'] as const;
+export const PARKING_OPTIONS = ['Driveway', 'Street Parking', 'Parking Lot', 'No Parking Available'] as const;

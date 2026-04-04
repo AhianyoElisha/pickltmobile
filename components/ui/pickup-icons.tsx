@@ -647,3 +647,83 @@ export function RouteConnectorIcon() {
     </Svg>
   );
 }
+
+// ── Building icon — apartment/building outline ────────────────────────────────
+export function BuildingIcon({
+  color = '#697586',
+  size = 24,
+}: {
+  color?: string;
+  size?: number;
+}) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M1 22H23" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M19.78 22V3.21C19.78 2.01 19.14 1.5 17.75 1.5H14.23C12.84 1.5 12.2 2.01 12.2 3.21V22" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M12.2 8.5H19.78" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M14.76 13H17.24" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M14.76 17H17.24" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M5.5 22V10C5.5 8.9 6.4 8 7.5 8H12.2" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M7.75 13H9.75" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M7.75 17H9.75" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
+// ── Stairs icon — floor level indicator ───────────────────────────────────────
+export function StairsIcon({
+  color = '#697586',
+  size = 24,
+}: {
+  color?: string;
+  size?: number;
+}) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M3 21H6V16H11V11H16V6H21V3" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M6 21V16" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M11 16V11" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M16 11V6" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
+// ── Parking icon — "P" in rounded square ──────────────────────────────────────
+export function ParkingIcon({
+  color = '#697586',
+  size = 24,
+}: {
+  color?: string;
+  size?: number;
+}) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M9 16V8H12.5C14.43 8 16 9.57 16 11.5C16 13.43 14.43 15 12.5 15H9" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
+// ── Calendar icon — for date picker fields ────────────────────────────────────
+export function CalendarIcon({
+  color = '#697586',
+  size = 24,
+}: {
+  color?: string;
+  size?: number;
+}) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M8 2V5" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M16 2V5" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M3.5 9.09H20.5" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M15.695 13.7H15.704" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M15.695 16.7H15.704" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M11.995 13.7H12.005" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M11.995 16.7H12.005" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M8.295 13.7H8.305" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M8.295 16.7H8.305" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}

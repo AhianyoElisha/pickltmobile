@@ -23,3 +23,9 @@ export interface ScheduledBookingData {
   to: LocationOption;
   moveType: MoveTypeOption;
 }
+
+export interface TimeSlot {
+  id: string;
+  label: string;
+  range: string;
+}
