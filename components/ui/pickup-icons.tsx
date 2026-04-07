@@ -727,3 +727,51 @@ export function CalendarIcon({
     </Svg>
   );
 }
+
+// ── Calendar Blank — no date dots, clean outline (matches Figma CalendarBlank) ─
+export function CalendarBlankIcon({
+  color = '#697586',
+  size = 18,
+}: {
+  color?: string;
+  size?: number;
+}) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 18 18" fill="none">
+      {/* Outer body */}
+      <Path
+        d="M2.25 6C2.25 4.343 3.593 3 5.25 3H12.75C14.407 3 15.75 4.343 15.75 6V13.5C15.75 15.157 14.407 16.5 12.75 16.5H5.25C3.593 16.5 2.25 15.157 2.25 13.5V6Z"
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      {/* Top pin hooks */}
+      <Path d="M6 1.5V4.5" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M12 1.5V4.5" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      {/* Header divider */}
+      <Path d="M2.25 7.5H15.75" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
+// ── Caret Down — solid triangle caret pointing down ───────────────────────────
+export function CaretDownIcon({
+  color = '#697586',
+  size = 16,
+}: {
+  color?: string;
+  size?: number;
+}) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 16 16" fill="none">
+      <Path
+        d="M3.5 6L8 10.5L12.5 6"
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
