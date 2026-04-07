@@ -1,6 +1,6 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { useCallback, useEffect } from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
+import { useEffect } from 'react';
+import { StyleSheet, View } from 'react-native';
 import Animated, {
   Easing,
   runOnJS,
@@ -35,7 +35,6 @@ const STEP_TITLES = [
 ];
 
 const TOTAL_STEPS = 3;
-const SCREEN_WIDTH = Dimensions.get('window').width;
 
 // ── Inner wizard ──────────────────────────────────────────────────────────────
 
@@ -65,31 +64,6 @@ function InstantWizardInner() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ── Slide animation (between steps) ─────────────────────────────────────
-  const slideX = useSharedValue(0);
-  const slideStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: slideX.value }],
-  }));
-
-  const animateTransition = useCallback((direction: 'forward' | 'back', cb: () => void) => {
-    const exitTo = direction === 'forward' ? -SCREEN_WIDTH : SCREEN_WIDTH;
-    const enterFrom = direction === 'forward' ? SCREEN_WIDTH : -SCREEN_WIDTH;
-
-    slideX.value = withTiming(exitTo, {
-      duration: 280,
-      easing: Easing.in(Easing.cubic),
-    }, () => {
-      'worklet';
-      slideX.value = enterFrom;
-      slideX.value = withTiming(0, {
-        duration: 220,
-        easing: Easing.out(Easing.cubic),
-      });
-    });
-
-    setTimeout(cb, 280);
-  }, [slideX]);
-
   // ── Navigation ──────────────────────────────────────────────────────────
   const goBack = () => router.back();
 
@@ -106,7 +80,7 @@ function InstantWizardInner() {
         },
       );
     } else {
-      animateTransition('back', prevStep);
+      prevStep();
     }
   }
 
@@ -121,7 +95,7 @@ function InstantWizardInner() {
         },
       });
     } else {
-      animateTransition('forward', nextStep);
+      nextStep();
     }
   }
 
@@ -129,7 +103,7 @@ function InstantWizardInner() {
     if (activeStep === 1) {
       handleHeaderBack();
     } else {
-      animateTransition('back', prevStep);
+      prevStep();
     }
   }
 
@@ -165,9 +139,7 @@ function InstantWizardInner() {
           onHeaderBack={handleHeaderBack}
           footerInScroll={false}
           hideStepBar={false}>
-          <Animated.View style={slideStyle}>
-            {renderStep()}
-          </Animated.View>
+          {renderStep()}
         </WizardShell>
       </Animated.View>
     </View>

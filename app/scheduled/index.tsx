@@ -1,12 +1,6 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { useCallback, useRef, useState } from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
-import Animated, {
-  Easing,
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated';
+import { useState } from 'react';
+import { StyleSheet, View } from 'react-native';
 
 import { WizardProvider, useWizard } from '@/context/wizard-context';
 import { WizardShell, WizardFooterConfig } from '@/components/ui/booking/wizard-shell';
@@ -49,7 +43,6 @@ const STEP_TITLES = [
 ];
 
 const TOTAL_STEPS = 8;
-const SCREEN_WIDTH = Dimensions.get('window').width;
 
 // ── Inner wizard (reads context) ──────────────────────────────────────────────
 
@@ -57,38 +50,12 @@ function ScheduledWizardInner() {
   const { state, nextStep, prevStep } = useWizard<ScheduledFormData>();
   const activeStep = state.activeStep;
 
-  // ── Slide animation ─────────────────────────────────────────────────────
-  const slideX = useSharedValue(0);
-  const slideStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: slideX.value }],
-  }));
-
-  const animateTransition = useCallback((direction: 'forward' | 'back', cb: () => void) => {
-    const exitTo = direction === 'forward' ? -SCREEN_WIDTH : SCREEN_WIDTH;
-    const enterFrom = direction === 'forward' ? SCREEN_WIDTH : -SCREEN_WIDTH;
-
-    slideX.value = withTiming(exitTo, {
-      duration: 280,
-      easing: Easing.in(Easing.cubic),
-    }, () => {
-      'worklet';
-      slideX.value = enterFrom;
-      slideX.value = withTiming(0, {
-        duration: 220,
-        easing: Easing.out(Easing.cubic),
-      });
-    });
-
-    // Dispatch state change after a short delay to sync with exit animation
-    setTimeout(cb, 280);
-  }, [slideX]);
-
   // ── Modal state ─────────────────────────────────────────────────────────
   const [modalVisible, setModalVisible] = useState(false);
-  const canProceedRef = useRef(false);
+  const [canProceed, setCanProceed] = useState(false);
 
-  function handleConsentChange(canProceed: boolean) {
-    canProceedRef.current = canProceed;
+  function handleConsentChange(value: boolean) {
+    setCanProceed(value);
   }
 
   // ── Navigation handlers ─────────────────────────────────────────────────
@@ -96,16 +63,15 @@ function ScheduledWizardInner() {
     if (activeStep === 1) {
       router.back();
     } else {
-      animateTransition('back', prevStep);
+      prevStep();
     }
   }
 
   function handleNext() {
     if (activeStep === TOTAL_STEPS) {
-      // Step 8: trigger payment
       setModalVisible(true);
     } else {
-      animateTransition('forward', nextStep);
+      nextStep();
     }
   }
 
@@ -113,7 +79,7 @@ function ScheduledWizardInner() {
     if (activeStep === 1) {
       router.back();
     } else {
-      animateTransition('back', prevStep);
+      prevStep();
     }
   }
 
@@ -160,7 +126,7 @@ function ScheduledWizardInner() {
         mode: 'single',
         nextLabel: 'Proceed to payment',
         onNext: handleNext,
-        nextDisabled: !canProceedRef.current,
+        nextDisabled: !canProceed,
       }
     : {
         mode: 'double',
@@ -185,7 +151,6 @@ function ScheduledWizardInner() {
     }
   }
 
-  const useFixedFooter = activeStep === 1;
   const hideStepBar = activeStep === TOTAL_STEPS;
 
   return (
@@ -196,11 +161,9 @@ function ScheduledWizardInner() {
         activeStep={activeStep}
         footer={footer}
         onHeaderBack={handleHeaderBack}
-        footerInScroll={!useFixedFooter}
+        footerInScroll={false}
         hideStepBar={hideStepBar}>
-        <Animated.View style={slideStyle}>
-          {renderStep()}
-        </Animated.View>
+        {renderStep()}
       </WizardShell>
 
       <PaymentSuccessModal
