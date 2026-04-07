@@ -5,7 +5,7 @@ import { MapCard } from '@/components/ui/map-card';
 import { useWizard } from '@/context/wizard-context';
 import { FontFamily } from '@/constants/theme';
 
-import type { InstantFormData } from '../../../app/instant/index';
+import type { InstantFormData } from '@/app/instant/index';
 
 export function InstantStepPickupInfo() {
   const { state, setField } = useWizard<InstantFormData>();
