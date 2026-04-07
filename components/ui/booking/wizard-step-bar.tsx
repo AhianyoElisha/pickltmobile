@@ -1,29 +1,63 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { Dimensions, LayoutChangeEvent, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Colors, FontFamily } from '@/constants/theme';
 
-const STEPS = [
+const DEFAULT_STEPS = [
   { num: 1, label: 'Move Details' },
   { num: 2, label: 'Pick Up Address' },
   { num: 3, label: 'Drop Off Address' },
   { num: 4, label: 'Inventory' },
-] as const;
+  { num: 5, label: 'Move Timing' },
+  { num: 6, label: 'Additional services & photos' },
+  { num: 7, label: 'Payment information' },
+];
 
-interface Props {
-  activeStep: 1 | 2 | 3 | 4;
+export interface StepDef {
+  num: number;
+  label: string;
 }
 
-export function WizardStepBar({ activeStep }: Props) {
+interface Props {
+  activeStep: number;
+  steps?: StepDef[];
+}
+
+export function WizardStepBar({ activeStep, steps }: Props) {
+  const resolvedSteps = steps ?? DEFAULT_STEPS;
+  const scrollRef = useRef<ScrollView>(null);
+  const stepPositions = useRef<Record<number, { x: number; width: number }>>({});
+  const screenWidth = Dimensions.get('window').width;
+
+  useEffect(() => {
+    const pos = stepPositions.current[activeStep];
+    if (pos && scrollRef.current) {
+      const scrollTo = pos.x + pos.width / 2 - screenWidth / 2;
+      scrollRef.current.scrollTo({ x: Math.max(0, scrollTo), animated: true });
+    }
+  }, [activeStep, screenWidth]);
+
+  function handleStepLayout(num: number, e: LayoutChangeEvent) {
+    stepPositions.current[num] = {
+      x: e.nativeEvent.layout.x,
+      width: e.nativeEvent.layout.width,
+    };
+  }
+
   return (
     <View style={s.wrapper}>
       <ScrollView
+        ref={scrollRef}
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={s.content}>
-        {STEPS.map((step, i) => {
+        {resolvedSteps.map((step, i) => {
           const isActive = step.num === activeStep;
           return (
-            <View key={step.num} style={s.group}>
+            <View
+              key={step.num}
+              style={s.group}
+              onLayout={(e) => handleStepLayout(step.num, e)}>
               {i > 0 && <View style={s.dash} />}
               <View style={s.step}>
                 <View style={[s.circle, isActive ? s.circleActive : s.circleInactive]}>
