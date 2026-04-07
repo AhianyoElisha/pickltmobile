@@ -1,5 +1,8 @@
+import { useRef } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import {
+  Animated,
+  Dimensions,
   Image,
   ScrollView,
   StyleSheet,
@@ -175,10 +178,24 @@ function ImagePlaceholder({ style }: { style?: object }) {
   );
 }
 
+// ── Constants ────────────────────────────────────────────────────────────────
+
+const SCREEN_HEIGHT = Dimensions.get('window').height;
+const HERO_MAX      = 360;
+const HERO_MIN      = Math.round(SCREEN_HEIGHT * 0.12);
+
 // ── Screen ────────────────────────────────────────────────────────────────────
 
 export default function MoveDetailsScreen() {
   const insets = useSafeAreaInsets();
+
+  const scrollY    = useRef(new Animated.Value(0)).current;
+  const heroHeight = scrollY.interpolate({
+    inputRange:  [0, HERO_MAX - HERO_MIN],
+    outputRange: [HERO_MAX, HERO_MIN],
+    extrapolate: 'clamp',
+  });
+
   const params = useLocalSearchParams<{
     fromName: string; fromAddress: string;
     toName: string;   toAddress: string;
@@ -209,8 +226,7 @@ export default function MoveDetailsScreen() {
 
   return (
     <View style={s.root}>
-      {/* ── Hero image ────────────────────────────────────────────────────── */}
-      <View style={s.hero}>
+      <Animated.View style={[s.hero, { height: heroHeight }]}>
         {heroUri ? (
           <Image source={{ uri: heroUri }} style={s.heroImg} resizeMode="cover" />
         ) : (
@@ -249,13 +265,18 @@ export default function MoveDetailsScreen() {
             />
           </Svg>
         </TouchableOpacity>
-      </View>
+      </Animated.View>
 
       {/* ── Scrollable content ────────────────────────────────────────────── */}
-      <ScrollView
-        style={s.scroll}
-        contentContainerStyle={s.scrollContent}
-        showsVerticalScrollIndicator={false}>
+      <Animated.ScrollView
+        style={StyleSheet.absoluteFill}
+        contentContainerStyle={[s.scrollContent, { paddingTop: HERO_MAX }]}
+        showsVerticalScrollIndicator={false}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: false },
+        )}
+        scrollEventThrottle={16}>
 
         {/* ── Status badges + route ──────────────────────────────────────── */}
         <View style={s.routeSection}>
@@ -472,7 +493,7 @@ export default function MoveDetailsScreen() {
         </View>
 
         <View style={{ height: 100 }} />
-      </ScrollView>
+      </Animated.ScrollView>
 
       {/* ── Fixed footer ─────────────────────────────────────────────────── */}
       <View style={[s.footer, { paddingBottom: insets.bottom + 8 }]}>
@@ -494,7 +515,9 @@ const s = StyleSheet.create({
 
   // Hero
   hero: {
-    height: 360,
+    position: 'absolute',
+    top: 0, left: 0, right: 0,
+    zIndex: 1,
     borderBottomLeftRadius: 16,
     borderBottomRightRadius: 16,
     overflow: 'hidden',
@@ -575,7 +598,7 @@ const s = StyleSheet.create({
 
   // Scroll
   scroll:        { flex: 1 },
-  scrollContent: { paddingHorizontal: 20, paddingTop: 18, gap: 18 },
+  scrollContent: { paddingHorizontal: 20, paddingBottom: 120, gap: 18 },
 
   // Route + badges
   routeSection: { gap: 14 },
@@ -721,6 +744,9 @@ const s = StyleSheet.create({
 
   // Footer
   footer: {
+    position: 'absolute',
+    bottom: 0, left: 0, right: 0,
+    zIndex: 1,
     backgroundColor: Colors.white,
     paddingTop: 16,
     paddingHorizontal: 20,
