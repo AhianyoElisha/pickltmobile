@@ -206,7 +206,7 @@ export default function HomeScreen() {
             <InstantBookingForm
               onSearch={(data) => {
                 router.push({
-                  pathname: '/instant/pickup-information',
+                  pathname: '/instant' as any,
                   params: {
                     fromName: data.from.name,
                     fromAddress: data.from.address,
@@ -222,7 +222,7 @@ export default function HomeScreen() {
             <ScheduledBookingForm
               onSearch={(data) => {
                 router.push({
-                  pathname: '/scheduled/move-overview' as any,
+                  pathname: '/scheduled' as any,
                   params: {
                     fromName: data.from.name,
                     fromAddress: data.from.address,
