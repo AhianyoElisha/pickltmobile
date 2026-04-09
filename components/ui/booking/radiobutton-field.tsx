@@ -2,6 +2,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Circle, Path, Svg } from 'react-native-svg';
 
 import { Colors, FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 
 // ── Icons ─────────────────────────────────────────────────────────────────────
 function CheckedCircle() {
@@ -19,10 +20,10 @@ function CheckedCircle() {
   );
 }
 
-function UncheckedCircle() {
+function UncheckedCircle({ color }: { color: string }) {
   return (
     <Svg width={20} height={20} viewBox="0 0 20 20" fill="none">
-      <Circle cx={10} cy={10} r={9} stroke="#CDD5DF" strokeWidth={1} />
+      <Circle cx={10} cy={10} r={9} stroke={color} strokeWidth={1} />
     </Svg>
   );
 }
@@ -44,26 +45,27 @@ export function RadioButtonField({
   value,
   onChange,
 }: RadioButtonFieldProps) {
+  const { colors } = useAppTheme();
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>{label}</Text>
+      <Text style={[styles.label, { color: colors.textPrimary }]}>{label}</Text>
       <View style={styles.rows}>
         <TouchableOpacity
-          style={[styles.row, value === true && styles.rowActive]}
+          style={[styles.row, { borderColor: colors.divider }, value === true && styles.rowActive]}
           onPress={() => onChange(true)}
           activeOpacity={0.8}>
-          <Text style={styles.rowText}>{options[0]}</Text>
-          {value === true ? <CheckedCircle /> : <UncheckedCircle />}
+          <Text style={[styles.rowText, { color: colors.textPrimary }]}>{options[0]}</Text>
+          {value === true ? <CheckedCircle /> : <UncheckedCircle color={colors.divider} />}
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.row, value === false && styles.rowActive]}
+          style={[styles.row, { borderColor: colors.divider }, value === false && styles.rowActive]}
           onPress={() => onChange(false)}
           activeOpacity={0.8}>
-          <Text style={styles.rowText}>{options[1]}</Text>
-          {value === false ? <CheckedCircle /> : <UncheckedCircle />}
+          <Text style={[styles.rowText, { color: colors.textPrimary }]}>{options[1]}</Text>
+          {value === false ? <CheckedCircle /> : <UncheckedCircle color={colors.divider} />}
         </TouchableOpacity>
       </View>
-      {hint ? <Text style={styles.hint}>{hint}</Text> : null}
+      {hint ? <Text style={[styles.hint, { color: colors.textSecondary }]}>{hint}</Text> : null}
     </View>
   );
 }
@@ -78,7 +80,6 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.semibold,
     fontSize: 16,
     lineHeight: 24.8,
-    color: Colors.textPrimary,
   },
 
   rows: { gap: 12 },
@@ -88,7 +89,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     borderWidth: 1,
-    borderColor: '#CDD5DF',
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 15,
@@ -101,13 +101,11 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.regular,
     fontSize: 16,
     lineHeight: 25.6,
-    color: '#000000',
   },
 
   hint: {
     fontFamily: FontFamily.regular,
     fontSize: 12,
     lineHeight: 18.6,
-    color: Colors.textSecondary,
   },
 });

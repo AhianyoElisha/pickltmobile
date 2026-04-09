@@ -10,14 +10,15 @@ import {
 import { Svg, Path } from 'react-native-svg';
 
 import { Colors, FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 
 // ── Chevron icon ──────────────────────────────────────────────────────────────
-function ChevronDown() {
+function ChevronDown({ color }: { color?: string }) {
   return (
     <Svg width={16} height={16} viewBox="0 0 16 16" fill="none">
       <Path
         d="M4 6L8 10L12 6"
-        stroke={Colors.textSecondary}
+        stroke={color ?? Colors.textSecondary}
         strokeWidth={1.5}
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -44,6 +45,7 @@ export function DropdownField({
   options,
   onChange,
 }: DropdownFieldProps) {
+  const { colors } = useAppTheme();
   const [sheetVisible, setSheetVisible] = useState(false);
   const slideAnim = useRef(new Animated.Value(500)).current;
   const fadeAnim  = useRef(new Animated.Value(0)).current;
@@ -76,16 +78,16 @@ export function DropdownField({
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>{label}</Text>
+      <Text style={[styles.label, { color: colors.textPrimary }]}>{label}</Text>
 
-      <TouchableOpacity style={styles.inputBox} onPress={openSheet} activeOpacity={0.8}>
-        <Text style={[styles.inputText, !value && styles.placeholder]}>
+      <TouchableOpacity style={[styles.inputBox, { borderColor: colors.borderDark, backgroundColor: colors.surface }]} onPress={openSheet} activeOpacity={0.8}>
+        <Text style={[styles.inputText, { color: value ? colors.textPrimary : colors.textSecondary }]}>
           {value || placeholder}
         </Text>
-        <ChevronDown />
+        <ChevronDown color={colors.textSecondary} />
       </TouchableOpacity>
 
-      {hint ? <Text style={styles.hint}>{hint}</Text> : null}
+      {hint ? <Text style={[styles.hint, { color: colors.textSecondary }]}>{hint}</Text> : null}
 
       <Modal
         visible={sheetVisible}
@@ -99,18 +101,18 @@ export function DropdownField({
             activeOpacity={1}
             onPress={() => closeSheet()}
           />
-          <Animated.View style={[sh.sheet, { transform: [{ translateY: slideAnim }] }]}>
+          <Animated.View style={[sh.sheet, { transform: [{ translateY: slideAnim }], backgroundColor: colors.surfaceElevated }]}>
             <View style={sh.handle} />
-            <Text style={sh.title}>{label}</Text>
+            <Text style={[sh.title, { color: colors.textPrimary }]}>{label}</Text>
             {options.map((opt) => {
               const active = value === opt;
               return (
                 <TouchableOpacity
                   key={opt}
-                  style={[sh.option, active && sh.optionActive]}
+                  style={[sh.option, active && sh.optionActive, !active && { borderColor: colors.divider }]}
                   onPress={() => closeSheet(() => onChange(opt))}
                   activeOpacity={0.8}>
-                  <Text style={[sh.optionText, active && sh.optionTextActive]}>{opt}</Text>
+                  <Text style={[sh.optionText, { color: colors.textPrimary }, active && sh.optionTextActive]}>{opt}</Text>
                   {active && <View style={sh.dot} />}
                 </TouchableOpacity>
               );
@@ -129,7 +131,6 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.medium,
     fontSize: 16,
     lineHeight: 24.8,
-    color: Colors.textPrimary,
   },
 
   inputBox: {
@@ -137,7 +138,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
     borderWidth: 1,
-    borderColor: '#CDD5DF',
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 15,
@@ -148,16 +148,12 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.regular,
     fontSize: 16,
     lineHeight: 25.6,
-    color: Colors.textPrimary,
   },
-
-  placeholder: { color: Colors.textSecondary },
 
   hint: {
     fontFamily: FontFamily.regular,
     fontSize: 12,
     lineHeight: 18.6,
-    color: Colors.textSecondary,
   },
 });
 
@@ -165,7 +161,6 @@ const sh = StyleSheet.create({
   container:  { flex: 1, justifyContent: 'flex-end' },
   backdrop:   { backgroundColor: 'rgba(0,0,0,0.45)' },
   sheet: {
-    backgroundColor: Colors.white,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingHorizontal: 20,
@@ -180,7 +175,6 @@ const sh = StyleSheet.create({
     fontFamily: FontFamily.semibold,
     fontSize: 16,
     lineHeight: 22.4,
-    color: Colors.textPrimary,
     marginBottom: 16,
   },
   option: {
@@ -194,7 +188,7 @@ const sh = StyleSheet.create({
     marginBottom: 10,
   },
   optionActive:     { borderColor: Colors.primary, backgroundColor: 'rgba(29,100,236,0.05)' },
-  optionText:       { fontFamily: FontFamily.medium, fontSize: 14, lineHeight: 19.6, color: Colors.textPrimary },
+  optionText:       { fontFamily: FontFamily.medium, fontSize: 14, lineHeight: 19.6 },
   optionTextActive: { color: Colors.primary, fontFamily: FontFamily.semibold },
   dot: { width: 10, height: 10, borderRadius: 5, backgroundColor: Colors.primary },
 });

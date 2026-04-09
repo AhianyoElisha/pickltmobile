@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Dimensions, LayoutChangeEvent, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Colors, FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 
 const DEFAULT_STEPS = [
   { num: 1, label: 'Move Details' },
@@ -28,6 +29,7 @@ export function WizardStepBar({ activeStep, steps }: Props) {
   const scrollRef = useRef<ScrollView>(null);
   const stepPositions = useRef<Record<number, { x: number; width: number }>>({});
   const screenWidth = Dimensions.get('window').width;
+  const { colors } = useAppTheme();
 
   useEffect(() => {
     const pos = stepPositions.current[activeStep];
@@ -58,12 +60,12 @@ export function WizardStepBar({ activeStep, steps }: Props) {
               key={step.num}
               style={s.group}
               onLayout={(e) => handleStepLayout(step.num, e)}>
-              {i > 0 && <View style={s.dash} />}
+              {i > 0 && <View style={[s.dash, { backgroundColor: colors.divider }]} />}
               <View style={s.step}>
-                <View style={[s.circle, isActive ? s.circleActive : s.circleInactive]}>
-                  <Text style={isActive ? s.numActive : s.numInactive}>{step.num}</Text>
+                <View style={[s.circle, isActive ? s.circleActive : [s.circleInactive, { backgroundColor: colors.surface }]]}>
+                  <Text style={isActive ? s.numActive : [s.numInactive, { color: colors.textSecondary }]}>{step.num}</Text>
                 </View>
-                <Text style={isActive ? s.labelActive : s.labelInactive}>{step.label}</Text>
+                <Text style={isActive ? [s.labelActive, { color: colors.textPrimary }] : [s.labelInactive, { color: colors.textSecondary }]}>{step.label}</Text>
               </View>
             </View>
           );
@@ -89,15 +91,15 @@ const s = StyleSheet.create({
 
   group: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   step:  { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  dash:  { width: 20, height: 1, backgroundColor: '#CDD5DF' },
+  dash:  { width: 20, height: 1 },
 
   circle:         { width: 20, height: 20, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
   circleActive:   { backgroundColor: Colors.primary },
-  circleInactive: { backgroundColor: '#F0F0F0' },
+  circleInactive: {},
 
   numActive:   { fontFamily: FontFamily.regular, fontSize: 12, lineHeight: 18, color: Colors.white },
-  numInactive: { fontFamily: FontFamily.regular, fontSize: 12, lineHeight: 18, color: '#B0B0B0' },
+  numInactive: { fontFamily: FontFamily.regular, fontSize: 12, lineHeight: 18 },
 
-  labelActive:   { fontFamily: FontFamily.regular, fontSize: 12, lineHeight: 18, color: Colors.textPrimary },
-  labelInactive: { fontFamily: FontFamily.regular, fontSize: 12, lineHeight: 18, color: '#B0B0B0' },
+  labelActive:   { fontFamily: FontFamily.regular, fontSize: 12, lineHeight: 18 },
+  labelInactive: { fontFamily: FontFamily.regular, fontSize: 12, lineHeight: 18 },
 });

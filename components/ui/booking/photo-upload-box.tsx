@@ -11,6 +11,7 @@ import Svg, { Path } from 'react-native-svg';
 
 import { GalleryAddIcon } from '@/components/ui/pickup-icons';
 import { Colors, FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 
 interface PhotoUploadBoxProps {
   title: string;
@@ -39,21 +40,23 @@ export function PhotoUploadBox({
   photos,
   onPhotosChange,
 }: PhotoUploadBoxProps) {
+  const { colors } = useAppTheme();
+
   if (photos.length === 0) {
     return (
       <TouchableOpacity
-        style={s.emptyBox}
+        style={[s.emptyBox, { borderColor: colors.textSecondary, backgroundColor: colors.surface }]}
         activeOpacity={0.7}
         onPress={() => pickImages(photos, onPhotosChange)}>
-        <GalleryAddIcon size={32} color={Colors.textSecondary} />
-        <Text style={s.emptyTitle}>{title}</Text>
-        <Text style={s.emptySubtitle}>{subtitle}</Text>
+        <GalleryAddIcon size={32} color={colors.textSecondary} />
+        <Text style={[s.emptyTitle, { color: colors.textPrimary }]}>{title}</Text>
+        <Text style={[s.emptySubtitle, { color: colors.textSecondary }]}>{subtitle}</Text>
       </TouchableOpacity>
     );
   }
 
   return (
-    <View style={s.filledBox}>
+    <View style={[s.filledBox, { borderColor: colors.borderDark, backgroundColor: colors.surface }]}>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -79,13 +82,13 @@ export function PhotoUploadBox({
 
         {/* Add more button */}
         <TouchableOpacity
-          style={s.addMoreBtn}
+          style={[s.addMoreBtn, { borderColor: colors.textSecondary }]}
           activeOpacity={0.7}
           onPress={() => pickImages(photos, onPhotosChange)}>
           <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
             <Path
               d="M12 5v14M5 12h14"
-              stroke={Colors.textSecondary}
+              stroke={colors.textSecondary}
               strokeWidth={2}
               strokeLinecap="round"
             />
@@ -104,24 +107,20 @@ const s = StyleSheet.create({
     height: 150,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: Colors.textSecondary,
     borderStyle: 'dashed',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    backgroundColor: Colors.white,
   },
   emptyTitle: {
     fontFamily: FontFamily.medium,
     fontSize: 12,
     lineHeight: 20,
-    color: '#333333',
   },
   emptySubtitle: {
     fontFamily: FontFamily.medium,
     fontSize: 12,
     lineHeight: 16,
-    color: '#858585',
     textAlign: 'center',
   },
 
@@ -130,8 +129,6 @@ const s = StyleSheet.create({
     minHeight: THUMB + 16,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: Colors.borderDark,
-    backgroundColor: Colors.white,
     paddingVertical: 8,
   },
   thumbRow: {
@@ -166,7 +163,6 @@ const s = StyleSheet.create({
     height: THUMB,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: Colors.textSecondary,
     borderStyle: 'dashed',
     alignItems: 'center',
     justifyContent: 'center',

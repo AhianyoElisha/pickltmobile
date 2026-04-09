@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 import { Colors, FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 import { TIME_SLOTS } from './data';
 import { fieldStyles } from './field-styles';
 import { TimeSlot } from './types';
@@ -26,6 +27,7 @@ function ClockIcon({ size = 24 }: { size?: number }) {
 }
 
 export function TimeField({ value, onChange }: TimeFieldProps) {
+  const { colors } = useAppTheme();
   const [modalVisible, setModalVisible] = useState(false);
 
   const slideAnim = useRef(new Animated.Value(400)).current;
@@ -85,23 +87,22 @@ export function TimeField({ value, onChange }: TimeFieldProps) {
             onPress={() => closeSheet()}
           />
           <Animated.View
-            style={[sheet.sheet, { transform: [{ translateY: slideAnim }] }]}>
-            <View style={sheet.handle} />
-            <Text style={sheet.title}>Preferred Time</Text>
-
+              style={[sheet.sheet, { transform: [{ translateY: slideAnim }], backgroundColor: colors.surfaceElevated }]}>
+              <View style={sheet.handle} />
+              <Text style={[sheet.title, { color: colors.textPrimary }]}>Preferred Time</Text>
             {TIME_SLOTS.map((slot) => {
               const isSelected = value?.id === slot.id;
               return (
-                <TouchableOpacity
+                  <TouchableOpacity
                   key={slot.id}
-                  style={[sheet.option, isSelected && sheet.optionSelected]}
+                  style={[sheet.option, isSelected && sheet.optionSelected, !isSelected && { borderColor: colors.divider }]}
                   onPress={() => closeSheet(() => onChange(slot))}
                   activeOpacity={0.8}>
                   <View style={sheet.optionContent}>
-                    <Text style={[sheet.optionLabel, isSelected && sheet.optionLabelSelected]}>
+                    <Text style={[sheet.optionLabel, { color: colors.textPrimary }, isSelected && sheet.optionLabelSelected]}>
                       {slot.label}
                     </Text>
-                    <Text style={sheet.optionRange}>{slot.range}</Text>
+                    <Text style={[sheet.optionRange, { color: colors.textSecondary }]}>{slot.range}</Text>
                   </View>
                   {isSelected && <View style={sheet.checkDot} />}
                 </TouchableOpacity>
@@ -123,7 +124,6 @@ const sheet = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.45)',
   },
   sheet: {
-    backgroundColor: Colors.white,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingHorizontal: 20,
@@ -142,7 +142,6 @@ const sheet = StyleSheet.create({
     fontFamily: FontFamily.semibold,
     fontSize: 16,
     lineHeight: 22.4,
-    color: Colors.textPrimary,
     marginBottom: 16,
   },
   option: {
@@ -166,7 +165,6 @@ const sheet = StyleSheet.create({
     fontFamily: FontFamily.semibold,
     fontSize: 15,
     lineHeight: 21,
-    color: Colors.textPrimary,
   },
   optionLabelSelected: {
     color: Colors.primary,
@@ -175,7 +173,6 @@ const sheet = StyleSheet.create({
     fontFamily: FontFamily.regular,
     fontSize: 13,
     lineHeight: 18.2,
-    color: Colors.textSecondary,
   },
   checkDot: {
     width: 10,

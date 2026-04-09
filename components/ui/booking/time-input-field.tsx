@@ -10,6 +10,7 @@ import {
 
 import { CalendarBlankIcon, CaretDownIcon } from '@/components/ui/pickup-icons';
 import { Colors, FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -37,9 +38,10 @@ function formatTime(t: ArrivalTime | null) {
 // ── Plus / Minus stepper buttons ──────────────────────────────────────────────
 
 function StepBtn({ label, onPress }: { label: string; onPress: () => void }) {
+  const { colors } = useAppTheme();
   return (
-    <TouchableOpacity style={picker.stepBtn} onPress={onPress} activeOpacity={0.7}>
-      <Text style={picker.stepBtnText}>{label}</Text>
+    <TouchableOpacity style={[picker.stepBtn, { backgroundColor: colors.surface }]} onPress={onPress} activeOpacity={0.7}>
+      <Text style={[picker.stepBtnText, { color: colors.textPrimary }]}>{label}</Text>
     </TouchableOpacity>
   );
 }
@@ -49,14 +51,12 @@ const picker = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: '#F0F0F0',
     alignItems: 'center',
     justifyContent: 'center',
   },
   stepBtnText: {
     fontFamily: FontFamily.bold,
     fontSize: 16,
-    color: Colors.textPrimary,
     lineHeight: 20,
   },
 });
@@ -64,6 +64,7 @@ const picker = StyleSheet.create({
 // ── Main Component ────────────────────────────────────────────────────────────
 
 export function TimeInputField({ label, value, onChange }: TimeInputFieldProps) {
+  const { colors } = useAppTheme();
   const [modalVisible, setModalVisible] = useState(false);
 
   // Picker draft state (editing inside modal before confirming)
@@ -138,13 +139,13 @@ export function TimeInputField({ label, value, onChange }: TimeInputFieldProps) 
     <>
       {/* ── Field row ──────────────────────────────────────────────────────── */}
       <View style={s.wrapper}>
-        <Text style={s.label}>{label}</Text>
-        <TouchableOpacity style={s.field} onPress={openSheet} activeOpacity={0.8}>
-          <CalendarBlankIcon size={18} color={Colors.textSecondary} />
-          <Text style={[s.valueText, !hasValue && s.placeholder]}>
+        <Text style={[s.label, { color: colors.textPrimary }]}>{label}</Text>
+        <TouchableOpacity style={[s.field, { borderColor: colors.borderDark, backgroundColor: colors.surface }]} onPress={openSheet} activeOpacity={0.8}>
+          <CalendarBlankIcon size={18} color={colors.textSecondary} />
+          <Text style={[s.valueText, { color: hasValue ? colors.textPrimary : colors.textSecondary }]}>
             {formatTime(value)}
           </Text>
-          <CaretDownIcon size={16} color={Colors.textSecondary} />
+          <CaretDownIcon size={16} color={colors.textSecondary} />
         </TouchableOpacity>
       </View>
 
@@ -163,52 +164,52 @@ export function TimeInputField({ label, value, onChange }: TimeInputFieldProps) 
             activeOpacity={1}
             onPress={() => closeSheet()}
           />
-          <Animated.View style={[sheet.sheet, { transform: [{ translateY: slideAnim }] }]}>
+          <Animated.View style={[sheet.sheet, { transform: [{ translateY: slideAnim }], backgroundColor: colors.surfaceElevated }]}>
             <View style={sheet.handle} />
-            <Text style={sheet.title}>Preferred Arrival Time</Text>
+            <Text style={[sheet.title, { color: colors.textPrimary }]}>Preferred Arrival Time</Text>
 
             {/* ── Picker controls ─────────────────────────────────────────── */}
             <View style={sheet.pickerRow}>
 
               {/* Hour column */}
               <View style={sheet.col}>
-                <Text style={sheet.colLabel}>Hour</Text>
+                <Text style={[sheet.colLabel, { color: colors.textSecondary }]}>Hour</Text>
                 <View style={sheet.spinnerRow}>
                   <StepBtn label="−" onPress={() => adjustHour(-1)} />
-                  <Text style={sheet.digitText}>{pad(draftHour)}</Text>
+                  <Text style={[sheet.digitText, { color: colors.textPrimary }]}>{pad(draftHour)}</Text>
                   <StepBtn label="+" onPress={() => adjustHour(1)} />
                 </View>
               </View>
 
-              <Text style={sheet.colon}>:</Text>
+              <Text style={[sheet.colon, { color: colors.textPrimary }]}>:</Text>
 
               {/* Minute column */}
               <View style={sheet.col}>
-                <Text style={sheet.colLabel}>Min</Text>
+                <Text style={[sheet.colLabel, { color: colors.textSecondary }]}>Min</Text>
                 <View style={sheet.spinnerRow}>
                   <StepBtn label="−" onPress={() => adjustMinute(-5)} />
-                  <Text style={sheet.digitText}>{pad(draftMinute)}</Text>
+                  <Text style={[sheet.digitText, { color: colors.textPrimary }]}>{pad(draftMinute)}</Text>
                   <StepBtn label="+" onPress={() => adjustMinute(5)} />
                 </View>
               </View>
 
               {/* AM / PM toggle */}
               <View style={sheet.col}>
-                <Text style={sheet.colLabel}>Period</Text>
-                <View style={sheet.periodToggle}>
+                <Text style={[sheet.colLabel, { color: colors.textSecondary }]}>Period</Text>
+                <View style={[sheet.periodToggle, { borderColor: colors.borderDark }]}>
                   <TouchableOpacity
-                    style={[sheet.periodBtn, draftPeriod === 'AM' && sheet.periodBtnActive]}
+                    style={[sheet.periodBtn, { backgroundColor: colors.surface }, draftPeriod === 'AM' && sheet.periodBtnActive]}
                     onPress={() => setDraftPeriod('AM')}
                     activeOpacity={0.8}>
-                    <Text style={[sheet.periodText, draftPeriod === 'AM' && sheet.periodTextActive]}>
+                    <Text style={[sheet.periodText, { color: colors.textSecondary }, draftPeriod === 'AM' && sheet.periodTextActive]}>
                       AM
                     </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    style={[sheet.periodBtn, draftPeriod === 'PM' && sheet.periodBtnActive]}
+                    style={[sheet.periodBtn, { backgroundColor: colors.surface }, draftPeriod === 'PM' && sheet.periodBtnActive]}
                     onPress={() => setDraftPeriod('PM')}
                     activeOpacity={0.8}>
-                    <Text style={[sheet.periodText, draftPeriod === 'PM' && sheet.periodTextActive]}>
+                    <Text style={[sheet.periodText, { color: colors.textSecondary }, draftPeriod === 'PM' && sheet.periodTextActive]}>
                       PM
                     </Text>
                   </TouchableOpacity>
@@ -235,14 +236,12 @@ const s = StyleSheet.create({
     fontFamily: FontFamily.medium,
     fontSize: 16,
     lineHeight: 22.4,
-    color: Colors.textPrimary,
   },
   field: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
     borderWidth: 1,
-    borderColor: '#CDD5DF',
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 15,
@@ -252,10 +251,6 @@ const s = StyleSheet.create({
     fontFamily: FontFamily.regular,
     fontSize: 16,
     lineHeight: 22.4,
-    color: Colors.textPrimary,
-  },
-  placeholder: {
-    color: Colors.textSecondary,
   },
 });
 
@@ -263,7 +258,6 @@ const sheet = StyleSheet.create({
   container: { flex: 1, justifyContent: 'flex-end' },
   backdrop:  { backgroundColor: 'rgba(0,0,0,0.45)' },
   sheet: {
-    backgroundColor: Colors.white,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingHorizontal: 24,
@@ -282,7 +276,6 @@ const sheet = StyleSheet.create({
     fontFamily: FontFamily.semibold,
     fontSize: 16,
     lineHeight: 22.4,
-    color: Colors.textPrimary,
     textAlign: 'center',
     marginBottom: 28,
   },
@@ -298,7 +291,6 @@ const sheet = StyleSheet.create({
     fontFamily: FontFamily.medium,
     fontSize: 12,
     lineHeight: 16,
-    color: Colors.textSecondary,
   },
   spinnerRow: {
     flexDirection: 'row',
@@ -308,14 +300,12 @@ const sheet = StyleSheet.create({
   colon: {
     fontFamily: FontFamily.bold,
     fontSize: 22,
-    color: Colors.textPrimary,
     paddingBottom: 4,
   },
   digitText: {
     fontFamily: FontFamily.bold,
     fontSize: 22,
     lineHeight: 28,
-    color: Colors.textPrimary,
     textAlign: 'center',
     minWidth: 36,
   },
@@ -323,13 +313,11 @@ const sheet = StyleSheet.create({
     flexDirection: 'row',
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#CDD5DF',
     overflow: 'hidden',
   },
   periodBtn: {
     paddingHorizontal: 10,
     paddingVertical: 10,
-    backgroundColor: Colors.white,
   },
   periodBtnActive: {
     backgroundColor: Colors.primary,
@@ -338,7 +326,6 @@ const sheet = StyleSheet.create({
     fontFamily: FontFamily.semibold,
     fontSize: 13,
     lineHeight: 18,
-    color: Colors.textSecondary,
   },
   periodTextActive: {
     color: Colors.white,

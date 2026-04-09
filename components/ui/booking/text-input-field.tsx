@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 
 import { Colors, FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 
 interface TextInputFieldProps {
   label: string;
@@ -31,22 +32,23 @@ export function TextInputField({
   keyboardType = 'default',
   autoCapitalize = 'sentences',
 }: TextInputFieldProps) {
+  const { colors } = useAppTheme();
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>{label}</Text>
+      <Text style={[styles.label, { color: colors.textPrimary }]}>{label}</Text>
       <TextInput
-        style={[styles.input, multiline && styles.inputMultiline]}
+        style={[styles.input, { borderColor: colors.borderDark, color: colors.textPrimary, backgroundColor: colors.surface }, multiline && styles.inputMultiline]}
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
-        placeholderTextColor={Colors.textSecondary}
+        placeholderTextColor={colors.textSecondary}
         multiline={multiline}
         numberOfLines={multiline ? numberOfLines : 1}
         textAlignVertical={multiline ? 'top' : 'center'}
         keyboardType={keyboardType}
         autoCapitalize={autoCapitalize}
       />
-      {hint ? <Text style={styles.hint}>{hint}</Text> : null}
+      {hint ? <Text style={[styles.hint, { color: colors.textSecondary }]}>{hint}</Text> : null}
     </View>
   );
 }
@@ -58,20 +60,16 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.medium,
     fontSize: 16,
     lineHeight: 22.4,
-    color: Colors.textPrimary,
   },
 
   input: {
     borderWidth: 1,
-    borderColor: Colors.borderDark,
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 15,
     fontFamily: FontFamily.regular,
     fontSize: 16,
     lineHeight: 22.4,
-    color: Colors.textPrimary,
-    backgroundColor: Colors.white,
   },
 
   inputMultiline: {
@@ -83,6 +81,5 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.regular,
     fontSize: 12,
     lineHeight: 18.6,
-    color: Colors.textSecondary,
   },
 });

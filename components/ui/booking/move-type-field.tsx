@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 import { Colors, FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 import { MoveTypeIcon } from '@/components/ui/home-icons';
 import { MOVE_TYPES } from './data';
 import { fieldStyles } from './field-styles';
@@ -19,6 +20,7 @@ interface MoveTypeFieldProps {
 }
 
 export function MoveTypeField({ value, onChange }: MoveTypeFieldProps) {
+  const { colors } = useAppTheme();
   const [modalVisible, setModalVisible] = useState(false);
 
   const slideAnim = useRef(new Animated.Value(400)).current;
@@ -102,25 +104,25 @@ export function MoveTypeField({ value, onChange }: MoveTypeFieldProps) {
           />
           {/* Sliding sheet */}
           <Animated.View
-            style={[sheet.sheet, { transform: [{ translateY: slideAnim }] }]}>
+            style={[sheet.sheet, { transform: [{ translateY: slideAnim }], backgroundColor: colors.surfaceElevated }]}>
             <View style={sheet.handle} />
-            <Text style={sheet.title}>Select Move Type</Text>
+            <Text style={[sheet.title, { color: colors.textPrimary }]}>Select Move Type</Text>
 
             {MOVE_TYPES.map((option) => {
               const isSelected = value?.id === option.id;
               return (
                 <TouchableOpacity
                   key={option.id}
-                  style={[sheet.option, isSelected && sheet.optionSelected]}
+                  style={[sheet.option, isSelected && sheet.optionSelected, !isSelected && { borderColor: colors.divider }]}
                   onPress={() => handleSelect(option)}
                   activeOpacity={0.8}>
                   <View style={sheet.optionTop}>
-                    <Text style={[sheet.optionTitle, isSelected && sheet.optionTitleSelected]}>
+                    <Text style={[sheet.optionTitle, { color: colors.textPrimary }, isSelected && sheet.optionTitleSelected]}>
                       {option.title}
                     </Text>
                     {isSelected && <View style={sheet.checkDot} />}
                   </View>
-                  <Text style={sheet.optionDesc}>{option.description}</Text>
+                  <Text style={[sheet.optionDesc, { color: colors.textSecondary }]}>{option.description}</Text>
                 </TouchableOpacity>
               );
             })}
@@ -140,7 +142,6 @@ const sheet = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.45)',
   },
   sheet: {
-    backgroundColor: Colors.white,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingHorizontal: 20,
@@ -159,7 +160,6 @@ const sheet = StyleSheet.create({
     fontFamily: FontFamily.semibold,
     fontSize: 16,
     lineHeight: 22.4,
-    color: Colors.textPrimary,
     marginBottom: 16,
   },
   option: {
@@ -183,7 +183,6 @@ const sheet = StyleSheet.create({
     fontFamily: FontFamily.semibold,
     fontSize: 15,
     lineHeight: 21,
-    color: Colors.textPrimary,
   },
   optionTitleSelected: {
     color: Colors.primary,
@@ -198,6 +197,5 @@ const sheet = StyleSheet.create({
     fontFamily: FontFamily.regular,
     fontSize: 13,
     lineHeight: 18.2,
-    color: Colors.textSecondary,
   },
 });

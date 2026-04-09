@@ -13,6 +13,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ArrowLeftIcon } from '@/components/ui/pickup-icons';
 import { WizardStepBar, StepDef } from '@/components/ui/booking/wizard-step-bar';
 import { Colors, FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 
 // ── Footer config ─────────────────────────────────────────────────────────────
 
@@ -53,12 +54,13 @@ export function WizardShell({
   hideStepBar = false,
 }: WizardShellProps) {
   const insets = useSafeAreaInsets();
+  const { colors } = useAppTheme();
 
   const footerButtons = (
     <View style={footer.mode === 'double' ? s.footerRow : s.footerSingle}>
       {footer.mode === 'double' && footer.onBack && (
-        <TouchableOpacity style={s.goBackBtn} activeOpacity={0.85} onPress={footer.onBack}>
-          <Text style={s.goBackText}>{footer.backLabel ?? 'Go Back'}</Text>
+        <TouchableOpacity style={[s.goBackBtn, { backgroundColor: colors.background, borderColor: colors.textSecondary }]} activeOpacity={0.85} onPress={footer.onBack}>
+          <Text style={[s.goBackText, { color: colors.textPrimary }]}>{footer.backLabel ?? 'Go Back'}</Text>
         </TouchableOpacity>
       )}
       <TouchableOpacity
@@ -72,13 +74,13 @@ export function WizardShell({
   );
 
   return (
-    <View style={s.root}>
+    <View style={[s.root, { backgroundColor: colors.background }]}>
       {/* ── Header ─────────────────────────────────────────────────────── */}
-      <View style={[s.header, { paddingTop: insets.top + 4 }]}>
+      <View style={[s.header, { paddingTop: insets.top + 4, backgroundColor: colors.background }]}>
         <TouchableOpacity style={s.backBtn} onPress={onHeaderBack} activeOpacity={0.8}>
           <ArrowLeftIcon size={20} color="#fff" />
         </TouchableOpacity>
-        <Text style={s.headerTitle}>{title}</Text>
+        <Text style={[s.headerTitle, { color: colors.textPrimary }]}>{title}</Text>
       </View>
 
       {/* ── Step bar ───────────────────────────────────────────────────── */}
@@ -90,7 +92,7 @@ export function WizardShell({
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={0}>
         <ScrollView
-          style={s.scroll}
+          style={[s.scroll, { backgroundColor: colors.background }]}
           contentContainerStyle={s.scrollContent}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled">
@@ -106,7 +108,7 @@ export function WizardShell({
 
       {/* ── Fixed footer ─────────────────────────────────────────────── */}
       {!footerInScroll && (
-        <View style={[s.fixedFooter, { paddingBottom: insets.bottom + 8 }]}>
+        <View style={[s.fixedFooter, { paddingBottom: insets.bottom + 8, backgroundColor: colors.surface }]}>
           {footerButtons}
         </View>
       )}
@@ -117,7 +119,7 @@ export function WizardShell({
 // ── Styles ────────────────────────────────────────────────────────────────────
 
 const s = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.background },
+  root: { flex: 1 },
 
   header: {
     flexDirection: 'row',
@@ -125,7 +127,6 @@ const s = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 12,
     gap: 12,
-    backgroundColor: Colors.background,
   },
   backBtn: {
     width: 48, height: 48, borderRadius: 9999,
@@ -137,18 +138,16 @@ const s = StyleSheet.create({
     fontFamily: FontFamily.bold,
     fontSize: 18,
     lineHeight: 25.2,
-    color: Colors.textPrimary,
     flex: 1,
   },
 
-  scroll:        { flex: 1, backgroundColor: Colors.background },
+  scroll:        { flex: 1 },
   scrollContent: { paddingHorizontal: 20, paddingBottom: 16 },
 
   // Fixed footer (outside scroll)
   fixedFooter: {
     paddingHorizontal: 20,
     paddingTop: 16,
-    backgroundColor: Colors.white,
     shadowColor: '#000',
     shadowOffset: { width: 2, height: 0 },
     shadowOpacity: 0.12,
@@ -167,9 +166,7 @@ const s = StyleSheet.create({
 
   goBackBtn: {
     flex: 1, height: 56,
-    backgroundColor: Colors.white,
     borderWidth: 1.5,
-    borderColor: Colors.textSecondary,
     borderRadius: 40,
     alignItems: 'center', justifyContent: 'center',
   },
@@ -177,7 +174,6 @@ const s = StyleSheet.create({
     fontFamily: FontFamily.bold,
     fontSize: 16,
     lineHeight: 22.4,
-    color: Colors.textPrimary,
   },
   nextBtn: {
     flex: 1, height: 56,

@@ -12,6 +12,7 @@ import {
   PlusIcon,
 } from '@/components/ui/pickup-icons';
 import { Colors, FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 
 // ── Data ────────────────────────────────────────────────────────────────────
 
@@ -34,14 +35,15 @@ const SPECIAL_ITEMS = [
 function CounterRow({
   label, count, onDecrement, onIncrement,
 }: { label: string; count: number; onDecrement: () => void; onIncrement: () => void }) {
+  const { colors } = useAppTheme();
   return (
     <View style={counter.row}>
-      <Text style={counter.label}>{label}</Text>
+      <Text style={[counter.label, { color: colors.textPrimary }]}>{label}</Text>
       <View style={counter.controls}>
         <TouchableOpacity onPress={onDecrement} activeOpacity={0.8}>
           <MinusCircleIcon size={32} />
         </TouchableOpacity>
-        <Text style={counter.count}>{count}</Text>
+        <Text style={[counter.count, { color: colors.textPrimary }]}>{count}</Text>
         <TouchableOpacity onPress={onIncrement} activeOpacity={0.8}>
           <PlusCircleIcon size={32} />
         </TouchableOpacity>
@@ -52,9 +54,9 @@ function CounterRow({
 
 const counter = StyleSheet.create({
   row:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', height: 32 },
-  label:    { fontFamily: FontFamily.regular, fontSize: 14, lineHeight: 19.6, color: Colors.textPrimary, flex: 1 },
+  label:    { fontFamily: FontFamily.regular, fontSize: 14, lineHeight: 19.6, flex: 1 },
   controls: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  count:    { fontFamily: FontFamily.semibold, fontSize: 14, lineHeight: 19.6, color: Colors.textPrimary, textAlign: 'center', width: 24 },
+  count:    { fontFamily: FontFamily.semibold, fontSize: 14, lineHeight: 19.6, textAlign: 'center', width: 24 },
 });
 
 // ── Helper ───────────────────────────────────────────────────────────────────
@@ -77,6 +79,7 @@ export function InventorySelector({
   selectedCategory = 'Living Room',
   onCategoryChange,
 }: InventorySelectorProps) {
+  const { colors } = useAppTheme();
   function getCount(key: string) { return counts[key] ?? 0; }
   function adjust(key: string, delta: number) {
     onCountsChange({ ...counts, [key]: Math.max(0, (counts[key] ?? 0) + delta) });
@@ -94,10 +97,10 @@ export function InventorySelector({
         {ROOM_CATEGORIES.map((cat) => (
           <TouchableOpacity
             key={cat}
-            style={[s.chip, selectedCategory === cat && s.chipActive]}
+            style={[s.chip, { backgroundColor: colors.borderDark }, selectedCategory === cat && s.chipActive]}
             onPress={() => onCategoryChange?.(cat)}
             activeOpacity={0.8}>
-            <Text style={[s.chipLabel, selectedCategory === cat && s.chipLabelActive]}>
+            <Text style={[s.chipLabel, { color: colors.textPrimary }, selectedCategory === cat && s.chipLabelActive]}>
               {cat}
             </Text>
           </TouchableOpacity>
@@ -105,7 +108,7 @@ export function InventorySelector({
       </ScrollView>
 
       {/* ── Room items ─────────────────────────────────────────────────── */}
-      <View style={[s.itemList, s.itemListBorder]}>
+      <View style={[s.itemList, s.itemListBorder, { borderBottomColor: colors.divider }]}>
         {currentItems.map((item) => {
           const key = itemKey(selectedCategory, item);
           return (
@@ -122,11 +125,11 @@ export function InventorySelector({
 
       {/* ── Special Items ───────────────────────────────────────────────── */}
       <View style={s.sectionBlock}>
-        <Text style={s.sectionHeading}>Special Items</Text>
-        <Text style={s.sectionSubtitle}>
+        <Text style={[s.sectionHeading, { color: colors.textPrimary }]}>Special Items</Text>
+        <Text style={[s.sectionSubtitle, { color: colors.textSecondary }]}>
           These items require special handling and may affect pricing.
         </Text>
-        <View style={[s.itemList, s.itemListBorder]}>
+        <View style={[s.itemList, s.itemListBorder, { borderBottomColor: colors.divider }]}>
           {SPECIAL_ITEMS.map((item) => {
             const key = itemKey('special', item);
             return (
@@ -144,13 +147,13 @@ export function InventorySelector({
 
       {/* ── Custom Items ────────────────────────────────────────────────── */}
       <View style={s.sectionBlock}>
-        <Text style={s.sectionHeading}>Custom Items</Text>
-        <Text style={s.sectionSubtitle}>
+        <Text style={[s.sectionHeading, { color: colors.textPrimary }]}>Custom Items</Text>
+        <Text style={[s.sectionSubtitle, { color: colors.textSecondary }]}>
           No custom items added yet. Click the button below to add items not listed.
         </Text>
-        <TouchableOpacity style={s.addCustomBtn} activeOpacity={0.8}>
-          <PlusIcon size={16} color={Colors.textPrimary} />
-          <Text style={s.addCustomText}>Add Custom Items</Text>
+        <TouchableOpacity style={[s.addCustomBtn, { borderColor: colors.textPrimary }]} activeOpacity={0.8}>
+          <PlusIcon size={16} color={colors.textPrimary} />
+          <Text style={[s.addCustomText, { color: colors.textPrimary }]}>Add Custom Items</Text>
         </TouchableOpacity>
       </View>
     </>
@@ -159,18 +162,18 @@ export function InventorySelector({
 
 const s = StyleSheet.create({
   categoryRow:    { flexDirection: 'row', gap: 10, paddingRight: 4 },
-  chip:           { height: 44, paddingHorizontal: 24, borderRadius: 100, alignItems: 'center', justifyContent: 'center', backgroundColor: '#111' },
+  chip:           { height: 44, paddingHorizontal: 24, borderRadius: 100, alignItems: 'center', justifyContent: 'center' },
   chipActive:     { backgroundColor: Colors.primary },
-  chipLabel:      { fontFamily: FontFamily.medium, fontSize: 14, lineHeight: 19.6, color: Colors.white },
+  chipLabel:      { fontFamily: FontFamily.medium, fontSize: 14, lineHeight: 19.6 },
   chipLabelActive: { color: Colors.white },
 
   itemList:       { gap: 8 },
-  itemListBorder: { borderBottomWidth: 0.5, borderBottomColor: Colors.textSecondary, paddingBottom: 12 },
+  itemListBorder: { borderBottomWidth: 0.5, paddingBottom: 12 },
 
   sectionBlock:    { gap: 4 },
-  sectionHeading:  { fontFamily: FontFamily.semibold, fontSize: 16, lineHeight: 22.4, color: Colors.textPrimary },
-  sectionSubtitle: { fontFamily: FontFamily.medium, fontSize: 14, lineHeight: 19.6, color: Colors.textSecondary, marginBottom: 4 },
+  sectionHeading:  { fontFamily: FontFamily.semibold, fontSize: 16, lineHeight: 22.4 },
+  sectionSubtitle: { fontFamily: FontFamily.medium, fontSize: 14, lineHeight: 19.6, marginBottom: 4 },
 
-  addCustomBtn:  { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12, borderWidth: 1.5, borderColor: Colors.textPrimary, borderRadius: 100, paddingVertical: 14, paddingHorizontal: 24, alignSelf: 'flex-start' },
-  addCustomText: { fontFamily: FontFamily.semibold, fontSize: 16, lineHeight: 22.4, color: Colors.textPrimary },
+  addCustomBtn:  { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12, borderWidth: 1.5, borderRadius: 100, paddingVertical: 14, paddingHorizontal: 24, alignSelf: 'flex-start' },
+  addCustomText: { fontFamily: FontFamily.semibold, fontSize: 16, lineHeight: 22.4 },
 });

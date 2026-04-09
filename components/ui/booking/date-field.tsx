@@ -9,6 +9,7 @@ import {
   View,
 } from 'react-native';
 import { Colors, FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 import { formatDate, getUpcomingDates } from './data';
 import { fieldStyles } from './field-styles';
 
@@ -28,6 +29,7 @@ function CalendarIcon({ size = 24 }: { size?: number }) {
 }
 
 export function DateField({ value, onChange }: DateFieldProps) {
+  const { colors } = useAppTheme();
   const [modalVisible, setModalVisible] = useState(false);
 
   const slideAnim = useRef(new Animated.Value(400)).current;
@@ -87,9 +89,9 @@ export function DateField({ value, onChange }: DateFieldProps) {
             onPress={() => closeSheet()}
           />
           <Animated.View
-            style={[sheet.sheet, { transform: [{ translateY: slideAnim }] }]}>
+            style={[sheet.sheet, { transform: [{ translateY: slideAnim }], backgroundColor: colors.surfaceElevated }]}>
             <View style={sheet.handle} />
-            <Text style={sheet.title}>Select Move Date</Text>
+            <Text style={[sheet.title, { color: colors.textPrimary }]}>Select Move Date</Text>
 
             <FlatList
               data={DATES}
@@ -102,14 +104,14 @@ export function DateField({ value, onChange }: DateFieldProps) {
                     style={[sheet.option, isSelected && sheet.optionSelected]}
                     onPress={() => closeSheet(() => onChange(item))}
                     activeOpacity={0.8}>
-                    <Text style={[sheet.optionText, isSelected && sheet.optionTextSelected]}>
+                    <Text style={[sheet.optionText, { color: colors.textPrimary }, isSelected && sheet.optionTextSelected]}>
                       {formatDate(item)}
                     </Text>
                     {isSelected && <View style={sheet.checkDot} />}
                   </TouchableOpacity>
                 );
               }}
-              ItemSeparatorComponent={() => <View style={sheet.separator} />}
+                ItemSeparatorComponent={() => <View style={[sheet.separator, { backgroundColor: colors.divider }]} />}
             />
           </Animated.View>
         </View>
@@ -127,7 +129,6 @@ const sheet = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.45)',
   },
   sheet: {
-    backgroundColor: Colors.white,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingHorizontal: 20,
@@ -147,7 +148,6 @@ const sheet = StyleSheet.create({
     fontFamily: FontFamily.semibold,
     fontSize: 16,
     lineHeight: 22.4,
-    color: Colors.textPrimary,
     marginBottom: 12,
   },
   option: {
@@ -161,7 +161,6 @@ const sheet = StyleSheet.create({
     fontFamily: FontFamily.medium,
     fontSize: 14,
     lineHeight: 19.6,
-    color: Colors.textPrimary,
   },
   optionTextSelected: {
     color: Colors.primary,
@@ -175,6 +174,5 @@ const sheet = StyleSheet.create({
   },
   separator: {
     height: 1,
-    backgroundColor: 'rgba(0,0,0,0.06)',
   },
 });

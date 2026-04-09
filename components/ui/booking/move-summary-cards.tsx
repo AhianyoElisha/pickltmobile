@@ -7,6 +7,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
 
 import { Colors, FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 
 // ── SmallCheckedIcon ──────────────────────────────────────────────────────────
 
@@ -34,10 +35,11 @@ export function CardHeading({
   title: string;
   subtitle?: string;
 }) {
+  const { colors } = useAppTheme();
   return (
     <View style={s.cardHeadingBlock}>
-      <Text style={s.cardHeading}>{title}</Text>
-      {!!subtitle && <Text style={s.cardSubtitle}>{subtitle}</Text>}
+      <Text style={[s.cardHeading, { color: colors.textPrimary }]}>{title}</Text>
+      {!!subtitle && <Text style={[s.cardSubtitle, { color: colors.textSecondary }]}>{subtitle}</Text>}
     </View>
   );
 }
@@ -55,17 +57,18 @@ export function DetailRow({
   dashed?: boolean;
   border?: boolean;
 }) {
+  const { colors } = useAppTheme();
   const rowStyle = dashed
-    ? s.rowDashed
+    ? [s.rowDashed, { borderBottomColor: colors.divider }]
     : border === false
     ? s.rowNoBorder
-    : s.rowSolid;
+    : [s.rowSolid, { borderBottomColor: colors.divider }];
 
   return (
     <View style={[s.row, rowStyle]}>
-      <Text style={s.rowLabel}>{label}</Text>
+      <Text style={[s.rowLabel, { color: colors.textSecondary }]}>{label}</Text>
       {typeof value === 'string' ? (
-        <Text style={s.rowValue}>{value}</Text>
+        <Text style={[s.rowValue, { color: colors.textPrimary }]}>{value}</Text>
       ) : (
         value
       )}
@@ -82,8 +85,9 @@ export function ReviewCard({
   children: React.ReactNode;
   padH15?: boolean;
 }) {
+  const { colors } = useAppTheme();
   return (
-    <View style={[s.card, padH15 && s.cardPadH15]}>
+    <View style={[s.card, { backgroundColor: colors.surface, borderColor: colors.borderDark }, padH15 && s.cardPadH15]}>
       {children}
     </View>
   );
@@ -94,9 +98,7 @@ export function ReviewCard({
 const s = StyleSheet.create({
   // Card wrapper
   card: {
-    backgroundColor: Colors.white,
     borderWidth: 0.5,
-    borderColor: '#B0B0B0',
     borderRadius: 12,
     paddingHorizontal: 10,
     paddingVertical: 6,
@@ -110,13 +112,11 @@ const s = StyleSheet.create({
     fontFamily: FontFamily.bold,
     fontSize: 18,
     lineHeight: 26,
-    color: Colors.textPrimary,
   },
   cardSubtitle: {
     fontFamily: FontFamily.regular,
     fontSize: 14,
     lineHeight: 26,
-    color: Colors.textSecondary,
   },
 
   // Detail rows
@@ -127,7 +127,6 @@ const s = StyleSheet.create({
   },
   rowSolid: {
     borderBottomWidth: 1,
-    borderBottomColor: '#E3E8EF',
     paddingBottom: 12,
     paddingTop: 4,
   },
@@ -137,7 +136,6 @@ const s = StyleSheet.create({
   },
   rowDashed: {
     borderBottomWidth: 1,
-    borderBottomColor: '#CDD5DF',
     borderStyle: 'dashed',
     paddingBottom: 20,
     paddingTop: 4,
@@ -146,14 +144,12 @@ const s = StyleSheet.create({
     fontFamily: FontFamily.medium,
     fontSize: 16,
     lineHeight: 20,
-    color: Colors.textSecondary,
     flex: 1,
   },
   rowValue: {
     fontFamily: FontFamily.medium,
     fontSize: 16,
     lineHeight: 24,
-    color: '#171717',
     textAlign: 'right',
     flexShrink: 1,
   },

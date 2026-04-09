@@ -12,6 +12,7 @@ import {
   View,
 } from 'react-native';
 import { Colors, FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 import { LOCATION_SUGGESTIONS } from './data';
 import { fieldStyles } from './field-styles';
 import { LocationOption } from './types';
@@ -24,6 +25,7 @@ interface LocationFieldProps {
 }
 
 export function LocationField({ Icon, label, value, onChange }: LocationFieldProps) {
+  const { colors } = useAppTheme();
   const [modalVisible, setModalVisible] = useState(false);
   const [query, setQuery] = useState('');
 
@@ -123,16 +125,16 @@ export function LocationField({ Icon, label, value, onChange }: LocationFieldPro
             />
             {/* Sliding sheet */}
             <Animated.View
-              style={[sheet.sheet, { transform: [{ translateY: slideAnim }] }]}>
+              style={[sheet.sheet, { transform: [{ translateY: slideAnim }], backgroundColor: colors.surfaceElevated }]}>
               <View style={sheet.handle} />
-              <Text style={sheet.title}>{label} Location</Text>
+              <Text style={[sheet.title, { color: colors.textPrimary }]}>{label} Location</Text>
 
               <TextInput
-                style={sheet.input}
+                style={[sheet.input, { borderColor: colors.divider, color: colors.textPrimary, backgroundColor: colors.surface }]}
                 value={query}
                 onChangeText={setQuery}
                 placeholder="Search location..."
-                placeholderTextColor="rgba(0,0,0,0.35)"
+                placeholderTextColor={colors.placeholder}
                 autoFocus
                 returnKeyType="search"
               />
@@ -147,13 +149,13 @@ export function LocationField({ Icon, label, value, onChange }: LocationFieldPro
                     style={sheet.option}
                     onPress={() => handleSelect(item)}
                     activeOpacity={0.7}>
-                    <Text style={sheet.optionName}>{item.name}</Text>
-                    <Text style={sheet.optionAddress}>{item.address}</Text>
+                    <Text style={[sheet.optionName, { color: colors.textPrimary }]}>{item.name}</Text>
+                    <Text style={[sheet.optionAddress, { color: colors.textSecondary }]}>{item.address}</Text>
                   </TouchableOpacity>
                 )}
-                ItemSeparatorComponent={() => <View style={sheet.separator} />}
+                ItemSeparatorComponent={() => <View style={[sheet.separator, { backgroundColor: colors.divider }]} />}
                 ListEmptyComponent={
-                  <Text style={sheet.empty}>No locations found</Text>
+                  <Text style={[sheet.empty, { color: colors.textSecondary }]}>No locations found</Text>
                 }
               />
             </Animated.View>
@@ -173,7 +175,6 @@ const sheet = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.45)',
   },
   sheet: {
-    backgroundColor: Colors.white,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingHorizontal: 20,
@@ -193,18 +194,15 @@ const sheet = StyleSheet.create({
     fontFamily: FontFamily.semibold,
     fontSize: 16,
     lineHeight: 22.4,
-    color: Colors.textPrimary,
     marginBottom: 12,
   },
   input: {
     height: 48,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.12)',
     paddingHorizontal: 14,
     fontFamily: FontFamily.regular,
     fontSize: 14,
-    color: Colors.textPrimary,
     marginBottom: 12,
   },
   option: {
@@ -214,23 +212,19 @@ const sheet = StyleSheet.create({
     fontFamily: FontFamily.medium,
     fontSize: 14,
     lineHeight: 19.6,
-    color: Colors.textPrimary,
   },
   optionAddress: {
     fontFamily: FontFamily.regular,
     fontSize: 12,
     lineHeight: 16.8,
-    color: Colors.textSecondary,
     marginTop: 2,
   },
   separator: {
     height: 1,
-    backgroundColor: 'rgba(0,0,0,0.06)',
   },
   empty: {
     fontFamily: FontFamily.regular,
     fontSize: 14,
-    color: Colors.textSecondary,
     textAlign: 'center',
     paddingVertical: 24,
   },
