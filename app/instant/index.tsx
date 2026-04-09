@@ -11,6 +11,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { WizardProvider, useWizard } from '@/context/wizard-context';
+import { useAppTheme } from '@/context/theme-context';
 import { WizardShell, WizardFooterConfig } from '@/components/ui/booking/wizard-shell';
 import { InstantStepPickupInfo } from '@/components/ui/booking/instant/step-pickup-info';
 import { InstantStepAddPhotos } from '@/components/ui/booking/instant/step-add-photos';
@@ -42,6 +43,7 @@ function InstantWizardInner() {
   const { state, nextStep, prevStep } = useWizard<InstantFormData>();
   const activeStep = state.activeStep;
   const fd = state.formData;
+  const { colors } = useAppTheme();
 
   // ── Circular-reveal animation (entry) ───────────────────────────────────
   const revealScale    = useSharedValue(0);
@@ -127,7 +129,7 @@ function InstantWizardInner() {
   return (
     <View style={styles.overlay}>
       {/* Expanding white circle — circular reveal */}
-      <Animated.View style={[StyleSheet.absoluteFill, styles.whiteBg, bgStyle]} />
+      <Animated.View style={[StyleSheet.absoluteFill, styles.whiteBg, bgStyle, { backgroundColor: colors.background }]} />
 
       {/* Screen content */}
       <Animated.View style={[StyleSheet.absoluteFill, styles.content, contentStyle]}>
@@ -184,6 +186,6 @@ export default function InstantWizardScreen() {
 
 const styles = StyleSheet.create({
   overlay: { flex: 1, backgroundColor: 'transparent' },
-  whiteBg: { backgroundColor: '#FFFFFF' },
+  whiteBg: {},
   content: { flex: 1 },
 });

@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/pickup-icons';
 import { useWizard } from '@/context/wizard-context';
 import { Colors, FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 
 import type { InstantFormData } from '@/constants/wizard-types';
 
@@ -55,12 +56,13 @@ const MOVERS: MoverOption[] = [
 
 // ── Ticket notch ───────────────────────────────────────────────────────────────
 function Notch({ top, side }: { top: number; side: 'left' | 'right' }) {
+  const { colors } = useAppTheme();
   return (
     <View
       style={[
         notchStyle.base,
         side === 'left' ? { left: -12 } : { right: -12 },
-        { top },
+        { top, backgroundColor: colors.background },
       ]}
     />
   );
@@ -68,7 +70,6 @@ function Notch({ top, side }: { top: number; side: 'left' | 'right' }) {
 const notchStyle = StyleSheet.create({
   base: {
     position: 'absolute', width: 24, height: 24, borderRadius: 12,
-    backgroundColor: Colors.background,
   },
 });
 
@@ -173,16 +174,17 @@ const card = StyleSheet.create({
 // ── Step Component ─────────────────────────────────────────────────────────────
 
 export function InstantStepSelectMover() {
+  const { colors } = useAppTheme();
   const { state, setField } = useWizard<InstantFormData>();
   const fd = state.formData;
 
   return (
     <View style={s.container}>
       {/* ── Map placeholder ── */}
-      <View style={s.mapCard}>
-        <View style={s.mapPlaceholder}>
-          <Text style={s.mapPlaceholderText}>Map Preview</Text>
-          <TouchableOpacity style={s.gpsBtn} activeOpacity={0.8}>
+      <View style={[s.mapCard, { borderColor: colors.textSecondary }]}>
+        <View style={[s.mapPlaceholder, { backgroundColor: colors.surface }]}>
+          <Text style={[s.mapPlaceholderText, { color: colors.textSecondary }]}>Map Preview</Text>
+          <TouchableOpacity style={[s.gpsBtn, { backgroundColor: colors.surface }]} activeOpacity={0.8}>
             <GpsTargetIcon size={24} color={Colors.primary} />
           </TouchableOpacity>
         </View>
@@ -203,12 +205,12 @@ export function InstantStepSelectMover() {
 
 const s = StyleSheet.create({
   container: { gap: 16 },
-  mapCard: { borderRadius: 16, overflow: 'hidden', borderWidth: 0.5, borderColor: Colors.textSecondary },
-  mapPlaceholder: { height: 201, backgroundColor: '#E8EDF2', alignItems: 'center', justifyContent: 'center' },
-  mapPlaceholderText: { fontFamily: FontFamily.regular, fontSize: 14, color: Colors.textSecondary },
+  mapCard: { borderRadius: 16, overflow: 'hidden', borderWidth: 0.5 },
+  mapPlaceholder: { height: 201, alignItems: 'center', justifyContent: 'center' },
+  mapPlaceholderText: { fontFamily: FontFamily.regular, fontSize: 14 },
   gpsBtn: {
     position: 'absolute', right: 12, bottom: 12, width: 48, height: 48, borderRadius: 9999,
-    backgroundColor: Colors.white, alignItems: 'center', justifyContent: 'center',
+    alignItems: 'center', justifyContent: 'center',
     shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.15, shadowRadius: 4, elevation: 3,
   },
 });

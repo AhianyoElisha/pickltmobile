@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import {
   Animated,
@@ -11,20 +12,22 @@ import Svg, { Circle, Path } from 'react-native-svg';
 
 import { PlusIcon } from '@/components/ui/pickup-icons';
 import { TextInputField } from '@/components/ui/booking/text-input-field';
+import { useCards, type SavedCard } from '@/context/cards-context';
 import { useWizard } from '@/context/wizard-context';
 import { Colors, FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 
 import type { ScheduledFormData } from '@/constants/wizard-types';
 
-// ── Mock saved cards ──────────────────────────────────────────────────────────
+type CardId = string;
 
-const MOCK_CARDS = [
-  { id: 'card_1', brand: 'Visa',       last4: '4242' },
-  { id: 'card_2', brand: 'Mastercard', last4: '5555' },
-  { id: 'card_3', brand: 'Visa',       last4: '1234' },
-] as const;
+function last4(number: string) {
+  return number.replace(/\D/g, '').slice(-4);
+}
 
-type CardId = typeof MOCK_CARDS[number]['id'];
+function capitalize(s: string) {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
 
 // ── Local SVG icons ───────────────────────────────────────────────────────────
 
@@ -69,8 +72,9 @@ function ChevronDownIcon({ color = '#CED2E6', size = 18 }: { color?: string; siz
 // ── Checkbox ──────────────────────────────────────────────────────────────────
 
 function Checkbox({ checked }: { checked: boolean }) {
+  const { colors } = useAppTheme();
   return (
-    <View style={[cbS.box, checked ? cbS.boxChecked : cbS.boxUnchecked]}>
+    <View style={[cbS.box, checked ? cbS.boxChecked : [cbS.boxUnchecked, { borderColor: colors.textSecondary, backgroundColor: colors.surface }]]}>
       {checked && (
         <Svg width={12} height={12} viewBox="0 0 12 12" fill="none">
           <Path
@@ -86,20 +90,22 @@ function Checkbox({ checked }: { checked: boolean }) {
 const cbS = StyleSheet.create({
   box:          { width: 20, height: 20, borderRadius: 4, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   boxChecked:   { backgroundColor: Colors.primary },
-  boxUnchecked: { borderWidth: 1.2, borderColor: '#697586', backgroundColor: Colors.white },
+  boxUnchecked: { borderWidth: 1.2 },
 });
 
 // ── CardPickerSheet ───────────────────────────────────────────────────────────
 
 interface CardPickerSheetProps {
   visible: boolean;
+  cards: SavedCard[];
   selectedCardId: CardId | null;
   onSelect: (id: CardId) => void;
   onAddNew: () => void;
   onClose: () => void;
 }
 
-function CardPickerSheet({ visible, selectedCardId, onSelect, onAddNew, onClose }: CardPickerSheetProps) {
+function CardPickerSheet({ visible, cards, selectedCardId, onSelect, onAddNew, onClose }: CardPickerSheetProps) {
+  const { colors } = useAppTheme();
   const slideAnim = useRef(new Animated.Value(500)).current;
   const fadeAnim  = useRef(new Animated.Value(0)).current;
 
@@ -132,10 +138,10 @@ function CardPickerSheet({ visible, selectedCardId, onSelect, onAddNew, onClose 
       <View style={sheet.container}>
         <Animated.View style={[StyleSheet.absoluteFillObject, sheet.backdrop, { opacity: fadeAnim }]} />
         <TouchableOpacity style={StyleSheet.absoluteFillObject} activeOpacity={1} onPress={handleClose} />
-        <Animated.View style={[sheet.sheet, { transform: [{ translateY: slideAnim }] }]}>
+        <Animated.View style={[sheet.sheet, { transform: [{ translateY: slideAnim }], backgroundColor: colors.surfaceElevated }]}>
           <View style={sheet.handle} />
-          <Text style={sheet.title}>Select Card</Text>
-          {MOCK_CARDS.map((card) => {
+          <Text style={[sheet.title, { color: colors.textPrimary }]}>Select Card</Text>
+          {cards.map((card) => {
             const isSelected = selectedCardId === card.id;
             return (
               <TouchableOpacity
@@ -148,8 +154,8 @@ function CardPickerSheet({ visible, selectedCardId, onSelect, onAddNew, onClose 
                     <CardIcon size={20} color={isSelected ? Colors.primary : Colors.textSecondary} />
                   </View>
                   <View style={sheet.cardText}>
-                    <Text style={sheet.cardBrand}>{card.brand}</Text>
-                    <Text style={sheet.cardMasked}>{'•••• ' + card.last4}</Text>
+                    <Text style={[sheet.cardBrand, { color: colors.textPrimary }]}>{capitalize(card.brand)}</Text>
+                    <Text style={[sheet.cardMasked, { color: colors.textSecondary }]}>{'•••• ' + last4(card.number)}</Text>
                   </View>
                 </View>
                 <View style={[sheet.radio, isSelected && sheet.radioSelected]}>
@@ -158,9 +164,9 @@ function CardPickerSheet({ visible, selectedCardId, onSelect, onAddNew, onClose 
               </TouchableOpacity>
             );
           })}
-          <TouchableOpacity style={sheet.addBtn} onPress={handleAddNew} activeOpacity={0.8}>
-            <PlusIcon size={16} color={Colors.textPrimary} />
-            <Text style={sheet.addBtnText}>Add new card</Text>
+          <TouchableOpacity style={[sheet.addBtn, { borderColor: colors.textPrimary }]} onPress={handleAddNew} activeOpacity={0.8}>
+            <PlusIcon size={16} color={colors.textPrimary} />
+            <Text style={[sheet.addBtnText, { color: colors.textPrimary }]}>Add new card</Text>
           </TouchableOpacity>
         </Animated.View>
       </View>
@@ -172,14 +178,14 @@ const sheet = StyleSheet.create({
   container: { flex: 1, justifyContent: 'flex-end' },
   backdrop:  { backgroundColor: 'rgba(0,0,0,0.45)' },
   sheet: {
-    backgroundColor: Colors.white, borderTopLeftRadius: 24, borderTopRightRadius: 24,
+    borderTopLeftRadius: 24, borderTopRightRadius: 24,
     paddingHorizontal: 20, paddingBottom: 40,
   },
   handle: {
     width: 40, height: 4, borderRadius: 2, backgroundColor: 'rgba(0,0,0,0.15)',
     alignSelf: 'center', marginTop: 12, marginBottom: 20,
   },
-  title: { fontFamily: FontFamily.semibold, fontSize: 16, lineHeight: 22.4, color: Colors.textPrimary, marginBottom: 16 },
+  title: { fontFamily: FontFamily.semibold, fontSize: 16, lineHeight: 22.4, marginBottom: 16 },
   cardRow: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     borderRadius: 12, borderWidth: 1, borderColor: 'rgba(0,0,0,0.1)', padding: 14, marginBottom: 10,
@@ -191,8 +197,8 @@ const sheet = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
   },
   cardText: { gap: 2 },
-  cardBrand: { fontFamily: FontFamily.medium, fontSize: 15, lineHeight: 21, color: Colors.textPrimary },
-  cardMasked: { fontFamily: FontFamily.regular, fontSize: 13, lineHeight: 18.2, color: Colors.textSecondary, letterSpacing: 1 },
+  cardBrand: { fontFamily: FontFamily.medium, fontSize: 15, lineHeight: 21 },
+  cardMasked: { fontFamily: FontFamily.regular, fontSize: 13, lineHeight: 18.2, letterSpacing: 1 },
   radio: {
     width: 20, height: 20, borderRadius: 10, borderWidth: 1.5, borderColor: Colors.textSecondary,
     alignItems: 'center', justifyContent: 'center',
@@ -201,10 +207,10 @@ const sheet = StyleSheet.create({
   radioInner: { width: 11, height: 11, borderRadius: 6, backgroundColor: Colors.primary },
   addBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10,
-    marginTop: 4, borderWidth: 1.5, borderColor: Colors.textPrimary, borderRadius: 40,
+    marginTop: 4, borderWidth: 1.5, borderRadius: 40,
     paddingVertical: 14, paddingHorizontal: 24,
   },
-  addBtnText: { fontFamily: FontFamily.semibold, fontSize: 15, lineHeight: 21, color: Colors.textPrimary },
+  addBtnText: { fontFamily: FontFamily.semibold, fontSize: 15, lineHeight: 21 },
 });
 
 // ── Payment type ──────────────────────────────────────────────────────────────
@@ -215,11 +221,13 @@ type PaymentType = 'card' | 'cash';
 
 export function StepPaymentInfo() {
   const { state, setField } = useWizard<ScheduledFormData>();
+  const { cards } = useCards();
+  const { colors } = useAppTheme();
   const fd = state.formData;
 
   const [cardSheetVisible, setCardSheetVisible] = useState(false);
 
-  const selectedCard = MOCK_CARDS.find((c) => c.id === fd.selectedCardId) ?? null;
+  const selectedCard = cards.find((c) => c.id === fd.selectedCardId) ?? null;
 
   function openCardSheet() {
     setField('selectedPayment', 'card' as PaymentType);
@@ -233,6 +241,7 @@ export function StepPaymentInfo() {
 
   function handleAddNew() {
     setCardSheetVisible(false);
+    router.push('/profile/add-card' as never);
   }
 
   const cardRowActive = fd.selectedPayment === 'card' && selectedCard !== null;
@@ -243,6 +252,7 @@ export function StepPaymentInfo() {
       {/* ── Card picker sheet ───────────────────────────────────────────── */}
       <CardPickerSheet
         visible={cardSheetVisible}
+        cards={cards}
         selectedCardId={fd.selectedCardId as any}
         onSelect={handleCardSelect}
         onAddNew={handleAddNew}
@@ -262,7 +272,7 @@ export function StepPaymentInfo() {
 
       {/* ── Select Payment ──────────────────────────────────────────────── */}
       <View style={s.paymentSection}>
-        <Text style={s.paymentTitle}>Select Payment</Text>
+        <Text style={[s.paymentTitle, { color: colors.textPrimary }]}>Select Payment</Text>
 
         <TouchableOpacity
           style={[s.paymentRow, cardRowActive ? s.paymentRowSelected : s.paymentRowCard]}
@@ -271,19 +281,19 @@ export function StepPaymentInfo() {
           <View style={s.paymentRowLeft}>
             <CardIcon size={20} color={cardRowActive ? Colors.white : '#CED2E6'} />
             <Text style={[s.paymentRowText, cardRowActive ? s.paymentRowTextSelected : s.paymentRowTextCard]}>
-              {selectedCard ? '•••• ' + selectedCard.last4 : 'Payment Method'}
+              {selectedCard ? '•••• ' + last4(selectedCard.number) : 'Payment Method'}
             </Text>
           </View>
           <ChevronDownIcon size={18} color={cardRowActive ? Colors.white : '#CED2E6'} />
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[s.paymentRow, cashSelected ? s.paymentRowSelected : s.paymentRowCash]}
+          style={[s.paymentRow, cashSelected ? s.paymentRowSelected : [s.paymentRowCash, { backgroundColor: colors.surface, borderColor: colors.textSecondary }]]}
           onPress={() => { setField('selectedPayment', 'cash' as PaymentType); setField('selectedCardId', null); }}
           activeOpacity={0.85}>
           <View style={s.paymentRowLeft}>
-            <CashIcon size={20} color={cashSelected ? Colors.white : Colors.textPrimary} />
-            <Text style={[s.paymentRowText, cashSelected ? s.paymentRowTextSelected : s.paymentRowTextCash]}>
+            <CashIcon size={20} color={cashSelected ? Colors.white : colors.textPrimary} />
+            <Text style={[s.paymentRowText, cashSelected ? s.paymentRowTextSelected : { color: colors.textPrimary }]}>
               Pay Cash
             </Text>
           </View>
@@ -296,7 +306,7 @@ export function StepPaymentInfo() {
         onPress={() => setField('isBusinessMove', !fd.isBusinessMove)}
         activeOpacity={0.8}>
         <Checkbox checked={fd.isBusinessMove} />
-        <Text style={s.checkboxLabel}>
+        <Text style={[s.checkboxLabel, { color: colors.textPrimary }]}>
           This is a business move (I need an invoice with VAT)
         </Text>
       </TouchableOpacity>
@@ -308,14 +318,14 @@ const s = StyleSheet.create({
   container: { gap: 20 },
 
   paymentSection: { gap: 12 },
-  paymentTitle: { fontFamily: FontFamily.semibold, fontSize: 16, lineHeight: 22.4, color: Colors.textPrimary },
+  paymentTitle: { fontFamily: FontFamily.semibold, fontSize: 16, lineHeight: 22.4 },
 
   paymentRow: {
     height: 52, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 12, borderRadius: 12,
   },
   paymentRowCard:     { backgroundColor: '#697586' },
-  paymentRowCash:     { backgroundColor: Colors.white, borderWidth: 1, borderColor: '#697586' },
+  paymentRowCash:     { borderWidth: 1 },
   paymentRowSelected: { backgroundColor: Colors.primary },
 
   paymentRowLeft: { flexDirection: 'row', alignItems: 'center', gap: 8 },
@@ -326,6 +336,6 @@ const s = StyleSheet.create({
 
   checkboxRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   checkboxLabel: {
-    flex: 1, fontFamily: FontFamily.regular, fontSize: 16, lineHeight: 25.6, color: Colors.textPrimary,
+    flex: 1, fontFamily: FontFamily.regular, fontSize: 16, lineHeight: 25.6,
   },
 });

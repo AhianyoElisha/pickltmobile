@@ -4,10 +4,12 @@ import { InventorySelector } from '@/components/ui/booking/inventory-selector';
 import { MapCard } from '@/components/ui/map-card';
 import { useWizard } from '@/context/wizard-context';
 import { FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 
 import type { InstantFormData } from '@/app/instant/index';
 
 export function InstantStepPickupInfo() {
+  const { colors } = useAppTheme();
   const { state, setField } = useWizard<InstantFormData>();
   const fd = state.formData;
 
@@ -15,7 +17,7 @@ export function InstantStepPickupInfo() {
     <View style={s.container}>
       <MapCard fromName={fd.fromName} toName={fd.toName} />
 
-      <Text style={s.sectionTitle}>Edit Pick Up And Drop off Points from the map</Text>
+      <Text style={[s.sectionTitle, { color: colors.textPrimary }]}>Edit Pick Up And Drop off Points from the map</Text>
 
       <InventorySelector
         counts={fd.counts}
@@ -33,6 +35,5 @@ const s = StyleSheet.create({
     fontFamily: FontFamily.medium,
     fontSize: 14,
     lineHeight: 19.6,
-    color: '#0D121C',
   },
 });

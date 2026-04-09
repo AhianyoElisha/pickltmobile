@@ -7,18 +7,20 @@ import { ElevatorField } from '@/components/ui/booking/radiobutton-field';
 import { BUILDING_TYPES, FLOOR_LEVELS, PARKING_OPTIONS } from '@/components/ui/booking/data';
 import { useWizard } from '@/context/wizard-context';
 import { FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 
 import type { ScheduledFormData } from '@/constants/wizard-types';
 
 export function StepMoveOverview() {
   const { state, setField } = useWizard<ScheduledFormData>();
+  const { colors } = useAppTheme();
   const fd = state.formData;
 
   return (
     <View style={s.container}>
       <MapCard fromName={fd.fromName} toName={fd.toName} />
 
-      <Text style={s.mapSubtitle}>Choose Pick Up And Drop off Points</Text>
+      <Text style={[s.mapSubtitle, { color: colors.textPrimary }]}>Choose Pick Up And Drop off Points</Text>
 
       <View style={s.form}>
         <SelectDateField
@@ -68,7 +70,6 @@ const s = StyleSheet.create({
     fontFamily: FontFamily.medium,
     fontSize: 14,
     lineHeight: 24,
-    color: '#000000',
     textAlign: 'center',
   },
   form: { gap: 20 },
