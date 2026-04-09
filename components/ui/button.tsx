@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 
 import { Colors, FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 
 type ButtonVariant =
   | 'primary'      // filled blue — default CTA
@@ -31,6 +32,7 @@ export function Button({
   disabled,
   ...rest
 }: ButtonProps) {
+  const { colors } = useAppTheme();
   const isPrimary = variant === 'primary';
   const isOutlinePrimary = variant === 'outline-primary';
 
@@ -57,7 +59,7 @@ export function Button({
               styles.label,
               isPrimary && styles.primaryLabel,
               isOutlinePrimary && styles.primaryLabel,
-              !isPrimary && !isOutlinePrimary && styles.outlineLabel,
+              !isPrimary && !isOutlinePrimary && [styles.outlineLabel, { color: colors.textPrimary }],
             ]}>
             {label}
           </Text>
@@ -84,7 +86,6 @@ const styles = StyleSheet.create({
   outlineContainer: {
     borderWidth: 1,
     borderColor: Colors.borderDark,
-    backgroundColor: 'transparent',
   },
   outlinePrimaryContainer: {
     borderWidth: 1.5,
@@ -117,6 +118,5 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.medium,
     fontSize: 16,
     lineHeight: 22.4,
-    color: Colors.textPrimary,
   },
 });

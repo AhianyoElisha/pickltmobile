@@ -3,27 +3,35 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { Stack, router, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import 'react-native-reanimated';
 
 import { AuthProvider, useAuth } from '@/context/auth-context';
-import { Colors } from '@/constants/theme';
-
-// Matches the app background so screens never flash white during transitions
-const AppTheme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    background: Colors.background,
-    card: Colors.background,
-  },
-};
+import { CardsProvider } from '@/context/cards-context';
+import { AppThemeProvider, useAppTheme } from '@/context/theme-context';
 
 SplashScreen.preventAutoHideAsync();
 
 function RootNavigator() {
   const { isLoading, token, hasSeenOnboarding, hasConfirmedProfile } = useAuth();
+  const { colors, isDark } = useAppTheme();
   const segments = useSegments();
+
+  // Build navigation theme dynamically so it follows the resolved appearance
+  const navTheme = useMemo(
+    () => ({
+      ...DefaultTheme,
+      dark: isDark,
+      colors: {
+        ...DefaultTheme.colors,
+        background: colors.background,
+        card: colors.background,
+        text: colors.textPrimary,
+        border: colors.borderLight,
+      },
+    }),
+    [isDark, colors],
+  );
 
   const [fontsLoaded] = useFonts({
     'SFProDisplay-Regular': require('@/assets/fonts/SF-Pro-Display-Regular.otf'),
@@ -61,29 +69,40 @@ function RootNavigator() {
     }
   }, [isLoading, fontsLoaded, token, hasSeenOnboarding, hasConfirmedProfile, segments]);
 
-  return (
+  const stack = (
     <Stack
       screenOptions={{
         headerShown: false,
         // Native slide-from-right for every push — feels intentional, not choppy
         animation: 'slide_from_right',
         // Match app background so there is never a white flash mid-transition
-        contentStyle: { backgroundColor: Colors.background },
+        contentStyle: { backgroundColor: colors.background },
         // Allow swipe-back on iOS; gesture tracks the animation in real time
         gestureEnabled: true,
       }}>
       <Stack.Screen name="(onboarding)" />
       <Stack.Screen name="(auth)" />
-      <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="(tabs)" options={{ animation: 'none' }} />
       <Stack.Screen
         name="profile-confirmation"
         options={{
           presentation: 'fullScreenModal',
-          animation: 'slide_from_bottom',
-          gestureEnabled: true,
+          animation: 'none',
+          gestureEnabled: false,
         }}
       />
       <Stack.Screen name="move-details" />
+      <Stack.Screen name="profile/personal-data" />
+      <Stack.Screen name="profile/language" />
+      <Stack.Screen name="profile/notifications" />
+      <Stack.Screen name="profile/security" />
+      <Stack.Screen name="profile/help-center" />
+      <Stack.Screen name="profile/privacy-policy" />
+      <Stack.Screen name="profile/payment-account" />
+      <Stack.Screen name="profile/your-card" />
+      <Stack.Screen name="profile/add-card" />
+      <Stack.Screen name="profile/verify-card" />
+      <Stack.Screen name="profile/appearance" />
       <Stack.Screen
         name="instant/index"
         options={{
@@ -113,15 +132,23 @@ function RootNavigator() {
       <Stack.Screen name="scheduled-results" />
     </Stack>
   );
+
+  return (
+    <ThemeProvider value={navTheme}>
+      {stack}
+      <StatusBar style={isDark ? 'light' : 'dark'} />
+    </ThemeProvider>
+  );
 }
 
 export default function RootLayout() {
   return (
-    <AuthProvider>
-      <ThemeProvider value={AppTheme}>
-        <RootNavigator />
-        <StatusBar style="auto" />
-      </ThemeProvider>
-    </AuthProvider>
+    <AppThemeProvider>
+      <AuthProvider>
+        <CardsProvider>
+          <RootNavigator />
+        </CardsProvider>
+      </AuthProvider>
+    </AppThemeProvider>
   );
 }

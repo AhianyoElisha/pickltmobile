@@ -8,11 +8,12 @@
  *   <Tabs tabBar={(props) => <BottomNavBar {...props} />}>
  */
 
-import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+import type { MaterialTopTabBarProps } from '@react-navigation/material-top-tabs';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Colors, FontFamily } from '@/constants/theme';
+import { FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 import {
   NavHomeIcon,
   NavMovesIcon,
@@ -36,15 +37,15 @@ const TAB_CONFIG: Record<
 };
 
 // ── Component ─────────────────────────────────────────────────────────────────
-export function BottomNavBar({ state, descriptors, navigation }: BottomTabBarProps) {
+export function BottomNavBar({ state, descriptors, navigation }: MaterialTopTabBarProps) {
   const insets = useSafeAreaInsets();
+  const { colors } = useAppTheme();
 
   return (
     <View
       style={[
         styles.container,
-        // Respect the device's home-indicator safe area
-        { paddingBottom: Math.max(insets.bottom, 8) },
+        { paddingBottom: Math.max(insets.bottom, 8), backgroundColor: colors.background },
       ]}>
       {state.routes.map((route, index) => {
         const config = TAB_CONFIG[route.name];
@@ -52,7 +53,7 @@ export function BottomNavBar({ state, descriptors, navigation }: BottomTabBarPro
 
         const { options } = descriptors[route.key];
         const isFocused = state.index === index;
-        const color = isFocused ? Colors.primary : Colors.textSecondary;
+        const color = isFocused ? colors.tabIconSelected : colors.tabIconDefault;
 
         const onPress = () => {
           const event = navigation.emit({
@@ -91,7 +92,6 @@ export function BottomNavBar({ state, descriptors, navigation }: BottomTabBarPro
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: Colors.white,
     paddingTop: 8,
     paddingHorizontal: 20,
     // Figma shadow: 2px 0px 40px rgba(0,0,0,0.12)

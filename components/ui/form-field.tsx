@@ -10,6 +10,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 
 import { Colors, FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 
 interface FormFieldProps extends Omit<TextInputProps, 'style'> {
   label: string;
@@ -17,20 +18,22 @@ interface FormFieldProps extends Omit<TextInputProps, 'style'> {
 }
 
 export function FormField({ label, secureTextEntry, ...rest }: FormFieldProps) {
+  const { colors } = useAppTheme();
   const [isFocused, setIsFocused] = useState(false);
   const [hidden, setHidden] = useState(secureTextEntry ?? false);
 
   return (
     <View style={styles.wrapper}>
-      <Text style={styles.label}>{label}</Text>
+      <Text style={[styles.label, { color: colors.textPrimary }]}>{label}</Text>
       <View
         style={[
           styles.inputRow,
+          { borderColor: colors.borderDark, backgroundColor: colors.surface },
           isFocused && styles.inputRowFocused,
         ]}>
         <TextInput
-          style={styles.input}
-          placeholderTextColor={Colors.textSecondary}
+          style={[styles.input, { color: colors.textPrimary }]}
+          placeholderTextColor={colors.textSecondary}
           secureTextEntry={hidden}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
@@ -41,7 +44,7 @@ export function FormField({ label, secureTextEntry, ...rest }: FormFieldProps) {
             <Ionicons
               name={hidden ? 'eye-off-outline' : 'eye-outline'}
               size={20}
-              color={Colors.textSecondary}
+              color={colors.textSecondary}
             />
           </TouchableOpacity>
         )}
@@ -59,13 +62,11 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.medium,
     fontSize: 14,
     lineHeight: 19.6,
-    color: Colors.textPrimary,
   },
   inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: Colors.borderDark,
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 15,
@@ -79,7 +80,6 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.medium,
     fontSize: 14,
     lineHeight: 19.6,
-    color: Colors.textPrimary,
     padding: 0,
   },
 });
