@@ -1,17 +1,26 @@
-import { Tabs } from 'expo-router';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { withLayoutContext } from 'expo-router';
 
 import { BottomNavBar } from '@/components/ui/bottom-nav-bar';
 
+const { Navigator } = createMaterialTopTabNavigator();
+const MaterialTopTabs = withLayoutContext(Navigator);
+
 export default function TabLayout() {
   return (
-    <Tabs
+    <MaterialTopTabs
+      tabBarPosition="bottom"
       tabBar={(props) => <BottomNavBar {...props} />}
-      screenOptions={{ headerShown: false }}>
+      screenOptions={{
+        swipeEnabled: true,
+        animationEnabled: true,
+        lazy: true,
+      }}>
       {/* Explicit order: Home → Moves → Scheduled → Profile */}
-      <Tabs.Screen name="index" />
-      <Tabs.Screen name="moves" />
-      <Tabs.Screen name="scheduled" />
-      <Tabs.Screen name="profile" />
-    </Tabs>
+      <MaterialTopTabs.Screen name="index" />
+      <MaterialTopTabs.Screen name="moves" />
+      <MaterialTopTabs.Screen name="scheduled" />
+      <MaterialTopTabs.Screen name="profile" />
+    </MaterialTopTabs>
   );
 }

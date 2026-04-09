@@ -1,32 +1,162 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-// Notifications — placeholder until Figma design is implemented
-export default function NotificationsScreen() {
+import { MoveCard } from '@/components/ui/move-card';
+import { FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
+
+const CATEGORIES = ['All', 'Pending', 'Completed', 'Cancelled', 'Kitchen'] as const;
+type Category = (typeof CATEGORIES)[number];
+
+type ScheduledMove = {
+  id: string;
+  city: string;
+  title: string;
+  price: string;
+  route: string;
+  address: string;
+};
+
+const SCHEDULED_MOVES: ScheduledMove[] = [];
+
+function CategoryChip({
+  label,
+  active,
+  onPress,
+}: {
+  label: string;
+  active: boolean;
+  onPress: () => void;
+}) {
+  const { colors } = useAppTheme();
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Alerts</Text>
-      <Text style={styles.subtitle}>Your notifications will appear here.</Text>
-    </View>
+    <TouchableOpacity
+      style={[s.chip, active ? s.chipActive : [s.chipInactive, { borderColor: colors.borderDark }]]}
+      activeOpacity={0.85}
+      onPress={onPress}>
+      <Text style={[s.chipText, active ? s.chipTextActive : { color: colors.textSecondary }]}>{label}</Text>
+    </TouchableOpacity>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#ffffff',
+export default function ScheduledScreen() {
+  const [category, setCategory] = useState<Category>('All');
+  const { colors } = useAppTheme();
+
+  const visible = SCHEDULED_MOVES;
+  const isEmpty = visible.length === 0;
+
+  return (
+    <SafeAreaView style={[s.safe, { backgroundColor: colors.background }]} edges={['top']}>
+      <View style={s.header}>
+        <Text style={[s.headerTitle, { color: colors.textPrimary }]}>Scheduled</Text>
+      </View>
+
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={s.chipsScroll}
+        contentContainerStyle={s.chipsRow}>
+        {CATEGORIES.map((cat) => (
+          <CategoryChip
+            key={cat}
+            label={cat}
+            active={category === cat}
+            onPress={() => setCategory(cat)}
+          />
+        ))}
+      </ScrollView>
+
+      {isEmpty ? (
+        <View style={s.emptyWrap}>
+          <Text style={[s.emptyTitle, { color: colors.textPrimary }]}>No scheduled moves</Text>
+          <Text style={[s.emptySubtitle, { color: colors.textSecondary }]}>Your scheduled moves will appear here.</Text>
+        </View>
+      ) : (
+        <ScrollView contentContainerStyle={s.cardList} showsVerticalScrollIndicator={false}>
+          {visible.map((move) => (
+            <MoveCard
+              key={move.id}
+              city={move.city}
+              title={move.title}
+              price={move.price}
+              route={move.route}
+              address={move.address}
+            />
+          ))}
+        </ScrollView>
+      )}
+    </SafeAreaView>
+  );
+}
+
+const s = StyleSheet.create({
+  safe: { flex: 1 },
+  header: {
+    paddingHorizontal: 20,
+    paddingTop: 8,
+    paddingBottom: 16,
+  },
+  headerTitle: {
+    fontFamily: FontFamily.bold,
+    fontSize: 18,
+    lineHeight: 25.2,
+    textAlign: 'center',
+  },
+  chipsScroll: {
+    flexGrow: 0,
+    flexShrink: 0,
+  },
+  chipsRow: {
+    paddingHorizontal: 20,
+    gap: 16,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  chip: {
+    height: 40,
+    borderRadius: 10,
+    paddingHorizontal: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 24,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#11181C',
-    marginBottom: 8,
+  chipActive: {
+    backgroundColor: '#1D64EC',
   },
-  subtitle: {
+  chipInactive: {
+    borderWidth: 1,
+  },
+  chipText: {
+    fontFamily: FontFamily.medium,
     fontSize: 14,
-    color: '#687076',
+    lineHeight: 19.6,
+  },
+  chipTextActive: {
+    color: '#FFFFFF',
+  },
+  cardList: {
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 32,
+    gap: 16,
+  },
+  emptyWrap: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 32,
+    gap: 8,
+  },
+  emptyTitle: {
+    fontFamily: FontFamily.bold,
+    fontSize: 16,
+    lineHeight: 22.4,
+  },
+  emptySubtitle: {
+    fontFamily: FontFamily.regular,
+    fontSize: 14,
+    lineHeight: 19.6,
     textAlign: 'center',
   },
 });

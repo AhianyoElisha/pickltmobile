@@ -20,6 +20,7 @@ import {
   LocationPinIcon,
 } from '@/components/ui/home-icons';
 import { Colors, FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const avatarPlaceholder = require('@/assets/images/avatar-placeholder.png') as number;
@@ -148,6 +149,7 @@ const MOCK_MOVES = [
 export default function HomeScreen() {
   const [bookingMode, setBookingMode] = useState<BookingMode>('instant');
   const [category, setCategory] = useState<Category>('All');
+  const { colors, isDark } = useAppTheme();
 
   return (
     // SafeAreaView bg matches dark card so the status bar area is dark
@@ -155,7 +157,7 @@ export default function HomeScreen() {
       <StatusBar style="light" />
 
       <ScrollView
-        style={styles.scroll}
+        style={[styles.scroll, { backgroundColor: colors.background }]}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}>
 
@@ -277,11 +279,10 @@ const styles = StyleSheet.create({
   // SafeAreaView bg = dark card colour → status bar area looks dark, blends with rounded card top
   safeArea: {
     flex: 1,
-    backgroundColor: '#0D121C',
+    
   },
   scroll: {
     flex: 1,
-    backgroundColor: Colors.background, // white — visible below/around the cards
   },
   scrollContent: {
     paddingBottom: 32,
