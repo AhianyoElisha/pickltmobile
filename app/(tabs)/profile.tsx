@@ -4,6 +4,7 @@ import { ComponentProps, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { DeleteAccountConfirmModal } from '@/components/ui/profile/delete-account-confirm-modal';
 import { LogoutConfirmModal } from '@/components/ui/profile/logout-confirm-modal';
 import { FontFamily } from '@/constants/theme';
 import { useAuth } from '@/context/auth-context';
@@ -23,6 +24,7 @@ export default function ProfileScreen() {
   const { signOut } = useAuth();
   const { colors } = useAppTheme();
   const [logoutVisible, setLogoutVisible] = useState(false);
+  const [deleteVisible, setDeleteVisible] = useState(false);
 
   const generalItems: RowItem[] = [
     { label: 'Edit Profile', icon: 'user', onPress: () => router.push('/profile/personal-data' as never) },
@@ -92,9 +94,22 @@ export default function ProfileScreen() {
               labelColor={colors.mutedLabel}
               iconColor={colors.danger}
             />
+            <SettingsRow
+              item={{ label: 'Delete Account', icon: 'trash-2', onPress: () => setDeleteVisible(true) }}
+              labelColor={colors.danger}
+              iconColor={colors.danger}
+            />
           </View>
         </View>
       </ScrollView>
+      <DeleteAccountConfirmModal
+        visible={deleteVisible}
+        onCancel={() => setDeleteVisible(false)}
+        onConfirm={() => {
+          setDeleteVisible(false);
+          // TODO: call delete account API when backend is wired up
+        }}
+      />
       <LogoutConfirmModal
         visible={logoutVisible}
         onCancel={() => setLogoutVisible(false)}
