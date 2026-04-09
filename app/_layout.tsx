@@ -3,7 +3,9 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { Stack, router, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import * as SystemUI from 'expo-system-ui';
 import { useEffect, useMemo } from 'react';
+import { Platform } from 'react-native';
 import 'react-native-reanimated';
 
 import { AuthProvider, useAuth } from '@/context/auth-context';
@@ -16,6 +18,12 @@ function RootNavigator() {
   const { isLoading, token, hasSeenOnboarding, hasConfirmedProfile } = useAuth();
   const { colors, isDark } = useAppTheme();
   const segments = useSegments();
+
+  // Keep the Android native Window background in sync with the theme.
+  // Without this, the layer below all RN views stays white and flashes during router.back().
+  useEffect(() => {
+    SystemUI.setBackgroundColorAsync(colors.background);
+  }, [colors.background]);
 
   // Build navigation theme dynamically so it follows the resolved appearance
   const navTheme = useMemo(
@@ -79,10 +87,18 @@ function RootNavigator() {
         contentStyle: { backgroundColor: colors.background },
         // Allow swipe-back on iOS; gesture tracks the animation in real time
         gestureEnabled: true,
+        // Android: use transparentModal so the native ScreenStack keeps the
+        // previous Fragment attached (isTranslucent = true). Without this, the
+        // previous screen's Fragment is removed after push, and remounting it
+        // during router.back() causes blank rows for 1-2 frames. The opaque
+        // contentStyle above makes the screen visually identical to a normal
+        // push. Base route groups override back to 'card' so they remain as
+        // the opaque anchor beneath pushed sub-screens.
+        ...(Platform.OS === 'android' && { presentation: 'transparentModal' as const }),
       }}>
-      <Stack.Screen name="(onboarding)" />
-      <Stack.Screen name="(auth)" />
-      <Stack.Screen name="(tabs)" options={{ animation: 'none' }} />
+      <Stack.Screen name="(onboarding)" options={{ presentation: 'card' }} />
+      <Stack.Screen name="(auth)" options={{ presentation: 'card' }} />
+      <Stack.Screen name="(tabs)" options={{ animation: 'none', presentation: 'card' }} />
       <Stack.Screen
         name="profile-confirmation"
         options={{
