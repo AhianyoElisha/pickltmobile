@@ -27,6 +27,7 @@ import {
   SmileIcon,
 } from '@/components/ui/pickup-icons';
 import { FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 
 // ── Demo messages ─────────────────────────────────────────────────────────────
 type Message = {
@@ -68,6 +69,7 @@ export default function MessageScreen() {
   const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES);
   const [inputText, setInputText] = useState('');
   const flatListRef = useRef<FlatList>(null);
+  const { colors, isDark } = useAppTheme();
 
   // ── Circular-reveal animation (mirrors call screen) ─────────────────────────
   const revealScale   = useSharedValue(0);
@@ -122,12 +124,12 @@ export default function MessageScreen() {
       <View style={[styles.bubbleRow, isSent ? styles.bubbleRowSent : styles.bubbleRowReceived]}>
         {!isSent && <View style={styles.avatarSm} />}
         <View style={styles.bubbleColumn}>
-          <View style={[styles.bubble, isSent ? styles.bubbleSent : styles.bubbleReceived]}>
-            <Text style={[styles.bubbleText, isSent ? styles.bubbleTextSent : styles.bubbleTextReceived]}>
+          <View style={[styles.bubble, isSent ? styles.bubbleSent : [styles.bubbleReceived, { backgroundColor: colors.surface }]]}>
+            <Text style={[styles.bubbleText, isSent ? styles.bubbleTextSent : { color: colors.textPrimary }]}>
               {item.text}
             </Text>
           </View>
-          <Text style={[styles.timeText, isSent ? styles.timeTextSent : styles.timeTextReceived]}>
+          <Text style={[styles.timeText, isSent ? styles.timeTextSent : styles.timeTextReceived, { color: colors.textSecondary }]}>
             {item.time}
           </Text>
         </View>
@@ -138,7 +140,7 @@ export default function MessageScreen() {
   return (
     <View style={styles.overlay}>
       {/* ── Expanding white circle — circular reveal ──────────────────────── */}
-      <Animated.View style={[StyleSheet.absoluteFill, styles.whiteBg, bgStyle]} />
+      <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor: colors.background }, bgStyle]} />
 
       {/* ── Screen content (fades in after bg covers screen) ──────────────── */}
       <Animated.View style={[StyleSheet.absoluteFill, contentStyle]}>
@@ -148,7 +150,7 @@ export default function MessageScreen() {
           keyboardVerticalOffset={0}
         >
           {/* ── Header ──────────────────────────────────────────────────────── */}
-          <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
+          <View style={[styles.header, { paddingTop: insets.top + 12, backgroundColor: colors.background, borderBottomColor: colors.divider }]}>
             <TouchableOpacity
               style={styles.backBtn}
               activeOpacity={0.85}
@@ -163,7 +165,7 @@ export default function MessageScreen() {
                 <Text style={styles.avatarInitial}>A</Text>
               </View>
               <View style={styles.contactTextCol}>
-                <Text style={styles.contactName}>Angela Mellinger</Text>
+                <Text style={[styles.contactName, { color: colors.textPrimary }]}>Angela Mellinger</Text>
                 <View style={styles.statusRow}>
                   <View style={styles.onlineDot} />
                   <Text style={styles.statusText}>Online</Text>
@@ -172,12 +174,11 @@ export default function MessageScreen() {
             </View>
 
             {/* Call shortcut */}
-            <TouchableOpacity
-              style={styles.callBtn}
+            <TouchableOpacity style={[styles.callBtn, { backgroundColor: isDark ? colors.surfaceElevated : '#EEF4FD' }]}
               activeOpacity={0.85}
               onPress={() => router.push('/shared/call' as any)}
             >
-              <CallIcon color="#1D64EC" size={20} />
+              <CallIcon color={colors.primary} size={20} />
             </TouchableOpacity>
           </View>
 
@@ -191,28 +192,28 @@ export default function MessageScreen() {
             showsVerticalScrollIndicator={false}
             ListHeaderComponent={
               <View style={styles.dateSeparator}>
-                <View style={styles.dateLine} />
-                <Text style={styles.dateText}>Today</Text>
-                <View style={styles.dateLine} />
+                <View style={[styles.dateLine, { backgroundColor: colors.divider }]} />
+                <Text style={[styles.dateText, { color: colors.textSecondary }]}>Today</Text>
+                <View style={[styles.dateLine, { backgroundColor: colors.divider }]} />
               </View>
             }
             onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: false })}
           />
 
           {/* ── Input bar ────────────────────────────────────────────────────── */}
-          <View style={[styles.inputBar, { paddingBottom: insets.bottom + 12 }]}>
+          <View style={[styles.inputBar, { paddingBottom: insets.bottom + 12, borderTopColor: colors.divider, backgroundColor: colors.background }]}>
             <TouchableOpacity style={styles.inputIconBtn} activeOpacity={0.7}>
-              <AttachmentIcon color="#9AA4B2" size={22} />
+              <AttachmentIcon color={colors.placeholder} size={22} />
             </TouchableOpacity>
 
-            <View style={styles.inputWrapper}>
+            <View style={[styles.inputWrapper, { backgroundColor: colors.surface }]}>
               <TouchableOpacity style={styles.emojiBtn} activeOpacity={0.7}>
-                <SmileIcon color="#9AA4B2" size={20} />
+                <SmileIcon color={colors.placeholder} size={20} />
               </TouchableOpacity>
               <TextInput
                 style={styles.textInput}
                 placeholder="Type a message..."
-                placeholderTextColor="#9AA4B2"
+                placeholderTextColor={colors.placeholder}
                 value={inputText}
                 onChangeText={setInputText}
                 multiline
@@ -241,7 +242,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   whiteBg: {
-    backgroundColor: '#ffffff',
+    backgroundColor: undefined,
   },
   flex: {
     flex: 1,
@@ -253,9 +254,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingBottom: 16,
-    backgroundColor: '#fff',
+    backgroundColor: undefined,
     borderBottomWidth: 1,
-    borderBottomColor: '#F2F4F7',
+    borderBottomColor: undefined,
     gap: 12,
   },
   backBtn: {
@@ -292,7 +293,7 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.semibold,
     fontSize: 15,
     lineHeight: 20,
-    color: '#0D121C',
+    color: undefined,
   },
   statusRow: {
     flexDirection: 'row',
@@ -315,7 +316,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#EEF4FD',
+    backgroundColor: undefined,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -336,13 +337,13 @@ const styles = StyleSheet.create({
   dateLine: {
     flex: 1,
     height: 1,
-    backgroundColor: '#E4E7EC',
+    backgroundColor: undefined,
   },
   dateText: {
     fontFamily: FontFamily.regular,
     fontSize: 12,
     lineHeight: 16,
-    color: '#9AA4B2',
+    color: undefined,
   },
   bubbleRow: {
     flexDirection: 'row',
@@ -376,7 +377,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 4,
   },
   bubbleReceived: {
-    backgroundColor: '#F2F4F7',
+    backgroundColor: undefined,
     borderBottomLeftRadius: 4,
   },
   bubbleText: {
@@ -388,7 +389,7 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   bubbleTextReceived: {
-    color: '#0D121C',
+    color: undefined,
   },
   timeText: {
     fontFamily: FontFamily.regular,
@@ -396,11 +397,11 @@ const styles = StyleSheet.create({
     lineHeight: 14,
   },
   timeTextSent: {
-    color: '#9AA4B2',
+    color: undefined,
     textAlign: 'right',
   },
   timeTextReceived: {
-    color: '#9AA4B2',
+    color: undefined,
     textAlign: 'left',
   },
 
@@ -412,8 +413,8 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     gap: 10,
     borderTopWidth: 1,
-    borderTopColor: '#F2F4F7',
-    backgroundColor: '#fff',
+    borderTopColor: undefined,
+    backgroundColor: undefined,
   },
   inputIconBtn: {
     width: 40,
@@ -425,7 +426,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'flex-end',
-    backgroundColor: '#F2F4F7',
+    backgroundColor: undefined,
     borderRadius: 24,
     paddingHorizontal: 14,
     paddingVertical: 8,
@@ -440,7 +441,7 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.regular,
     fontSize: 14,
     lineHeight: 20,
-    color: '#0D121C',
+    color: undefined,
     maxHeight: 100,
     paddingTop: 0,
     paddingBottom: 0,

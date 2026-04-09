@@ -25,9 +25,11 @@ import {
   VolumeIcon,
 } from '@/components/ui/pickup-icons';
 import { FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 
 export default function CallScreen() {
   const insets = useSafeAreaInsets();
+  const { colors } = useAppTheme();
 
   // ── Circular-reveal animation ───────────────────────────────────────────────
   const revealScale = useSharedValue(0);
@@ -125,7 +127,7 @@ export default function CallScreen() {
   return (
     <View style={styles.overlay}>
       {/* ── Expanding white circle — circular reveal ──────────────────────── */}
-      <Animated.View style={[StyleSheet.absoluteFill, styles.whiteBg, bgStyle]} />
+      <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor: colors.background }, bgStyle]} />
 
       {/* ── Screen content ────────────────────────────────────────────────── */}
       <Animated.View style={[StyleSheet.absoluteFill, contentStyle]}>
@@ -140,7 +142,7 @@ export default function CallScreen() {
             <ArrowLeftIcon color="#fff" size={20} />
           </TouchableOpacity>
 
-          <Text style={styles.title}>Audio Call</Text>
+          <Text style={[styles.title, { color: colors.textPrimary }]}>Audio Call</Text>
 
           {/* Plain spacer — same width as back button to keep title centred */}
           <View style={styles.headerSpacer} />
@@ -158,13 +160,13 @@ export default function CallScreen() {
             {/* Ring 3 — solid brand blue (144×144) */}
             <View style={styles.ring3} />
             {/* Avatar placeholder (80×80) */}
-            <View style={styles.avatar} />
+            <View style={[styles.avatar, { backgroundColor: colors.subtle }]} />
           </View>
 
           {/* Name + timer */}
           <View style={styles.textBlock}>
-            <Text style={styles.name}>Angela Mellinger</Text>
-            <Text style={styles.timerText}>{mm}:{ss}</Text>
+            <Text style={[styles.name, { color: colors.textPrimary }]}>Angela Mellinger</Text>
+            <Text style={[styles.timerText, { color: colors.textPrimary }]}>{mm}:{ss}</Text>
           </View>
         </View>
 
@@ -203,7 +205,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   whiteBg: {
-    backgroundColor: '#ffffff',
+    backgroundColor: undefined,
   },
 
   // ── Header ──────────────────────────────────────────────────────────────────
@@ -232,7 +234,7 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.bold,
     fontSize: 18,
     lineHeight: 25.2,
-    color: '#0D121C',
+    color: undefined,
     textAlign: 'center',
   },
 
@@ -281,7 +283,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#E4E7EC',
+    backgroundColor: undefined,
   },
 
   // ── Text under ripple ────────────────────────────────────────────────────────
@@ -293,14 +295,14 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.bold,
     fontSize: 20,
     lineHeight: 28,
-    color: '#0D121C',
+    color: undefined,
     textAlign: 'center',
   },
   timerText: {
     fontFamily: FontFamily.regular,
     fontSize: 16,
     lineHeight: 22.4,
-    color: '#0D121C',
+    color: undefined,
     textAlign: 'center',
   },
 
