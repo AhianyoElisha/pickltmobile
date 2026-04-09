@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 
 import { Colors, FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 
 interface OtpInputProps {
   value: string;
@@ -20,6 +21,7 @@ interface OtpInputProps {
 export function OtpInput({ value, onChange, length = 4 }: OtpInputProps) {
   const [focused, setFocused] = useState(false);
   const inputRef = useRef<TextInput>(null);
+  const { colors } = useAppTheme();
 
   const digits = value.split('');
   const activeIndex = digits.length < length ? digits.length : length - 1;
@@ -52,6 +54,7 @@ export function OtpInput({ value, onChange, length = 4 }: OtpInputProps) {
             key={i}
             style={[
               styles.cell,
+              { borderColor: colors.borderDark, backgroundColor: colors.background },
               isFilled && !isLastFilled && styles.cellFilled,
               isLastFilled && styles.cellActive,
               isActive && styles.cellCursor,
@@ -96,22 +99,16 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: Colors.borderDark,
-    backgroundColor: Colors.white,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  cellFilled: {
-    borderColor: Colors.borderDark,
-    backgroundColor: Colors.white,
-  },
+  cellFilled: {},
   cellActive: {
     backgroundColor: Colors.primary,
     borderWidth: 0,
   },
   cellCursor: {
     borderColor: Colors.primary,
-    backgroundColor: Colors.white,
   },
   cellText: {
     fontFamily: FontFamily.medium,

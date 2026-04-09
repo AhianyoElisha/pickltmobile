@@ -20,6 +20,7 @@ import {
   VerifiedBadgeIcon,
 } from '@/components/ui/pickup-icons';
 import { Colors, FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 
 // ── Figma asset URLs ──────────────────────────────────────────────────────────
 const AVATAR_IMG = 'https://www.figma.com/api/mcp/asset/21bf82e1-57aa-458c-b598-69adcdb642f7';
@@ -102,11 +103,12 @@ const BANNER_CONFIG: Partial<Record<MoveStatus, BannerConfig>> = {
 
 // ── Header right content ──────────────────────────────────────────────────────
 function HeaderRight({ status }: { status: MoveStatus }) {
+  const { colors } = useAppTheme();
   if (status === 'en_route') {
     return (
       <View style={styles.headerRightBlock}>
-        <Text style={styles.etaDist}>5 min</Text>
-        <Text style={styles.etaTime}>0.1 km away</Text>
+        <Text style={[styles.etaDist, { color: colors.textPrimary }]}>5 min</Text>
+        <Text style={[styles.etaTime, { color: colors.textSecondary }]}>0.1 km away</Text>
       </View>
     );
   }
@@ -122,7 +124,7 @@ function HeaderRight({ status }: { status: MoveStatus }) {
     return (
       <View style={styles.headerRightBlock}>
         <Text style={[styles.etaDist, { color: Colors.primary }]}>In transit</Text>
-        <Text style={styles.etaTime}>To destination</Text>
+        <Text style={[styles.etaTime, { color: colors.textSecondary }]}>To destination</Text>
       </View>
     );
   }
@@ -134,7 +136,7 @@ function HeaderRight({ status }: { status: MoveStatus }) {
   return (
     <View style={styles.headerRightBlock}>
       <Text style={styles.priceText}>$55</Text>
-      <Text style={styles.etaTime}>{isFinal ? 'Final price' : 'Estimated price'}</Text>
+      <Text style={[styles.etaTime, { color: colors.textSecondary }]}>{isFinal ? 'Final price' : 'Estimated price'}</Text>
     </View>
   );
 }
@@ -181,6 +183,7 @@ export default function ServiceCard({
 }: ServiceCardProps) {
   const [rating, setRating]   = useState(0);
   const [comment, setComment] = useState('');
+  const { colors } = useAppTheme();
 
   const banner       = BANNER_CONFIG[status];
   const showTruck    = ['mover_arrived', 'loading', 'arrived_destination', 'unloading'].includes(status);
@@ -205,7 +208,7 @@ export default function ServiceCard({
     <View style={[styles.wrapper, { bottom, gap: cardGap }]}>
 
       {/* ── Primary service info card ────────────────────────────────────────── */}
-      <View style={[styles.serviceCard, { height: primaryCardHeight }]}>
+      <View style={[styles.serviceCard, { height: primaryCardHeight, backgroundColor: colors.surface }]}>
 
         {/* Floating truck decoration above card */}
         {showTruck && (
@@ -226,11 +229,11 @@ export default function ServiceCard({
           </View>
 
           <View style={styles.scNameBlock}>
-            <Text style={styles.scName}>William Jane</Text>
+            <Text style={[styles.scName, { color: colors.textPrimary }]}>William Jane</Text>
             <View style={styles.scRatingRow}>
               <StarIcon size={15} />
-              <Text style={styles.scRatingText}>4.7 Rating</Text>
-              <Text style={styles.scMovesText}>9 moves</Text>
+              <Text style={[styles.scRatingText, { color: colors.textSecondary }]}>4.7 Rating</Text>
+              <Text style={[styles.scMovesText, { color: colors.textSecondary }]}>9 moves</Text>
             </View>
           </View>
 
@@ -238,7 +241,7 @@ export default function ServiceCard({
         </View>
 
         {/* Divider */}
-        <View style={styles.scDivider} />
+        <View style={[styles.scDivider, { backgroundColor: colors.divider }]} />
 
         {/* ── Status banner (hidden for en_route and move_completed) ─────────── */}
         {banner && (
@@ -257,29 +260,29 @@ export default function ServiceCard({
         {isEnRoute ? (
           // en_route: Figma exact absolute layout
           <>
-            <View style={styles.scVehicleBoxAbs}>
-              <VehicleIcon size={20} color={Colors.textSecondary} />
+            <View style={[styles.scVehicleBoxAbs, { backgroundColor: colors.surfaceElevated }]}>
+              <VehicleIcon size={20} color={colors.textSecondary} />
             </View>
-            <Text style={styles.scVehicleNameAbs}>Mercedes Benz Sprinter</Text>
-            <Text style={styles.scVehiclePlateAbs}>GW-12903-22</Text>
+            <Text style={[styles.scVehicleNameAbs, { color: colors.textPrimary }]}>Mercedes Benz Sprinter</Text>
+            <Text style={[styles.scVehiclePlateAbs, { color: colors.textSecondary }]}>GW-12903-22</Text>
             <View style={styles.scMoversGroupAbs}>
-              <UsersIcon size={15} color={Colors.textSecondary} />
-              <Text style={styles.scMoversText}>2 movers</Text>
+              <UsersIcon size={15} color={colors.textSecondary} />
+              <Text style={[styles.scMoversText, { color: colors.textSecondary }]}>2 movers</Text>
             </View>
           </>
         ) : (
           // All other states (including move_completed): flex vehicle row
           <View style={styles.vehicleSection}>
-            <View style={styles.vehicleIconBox}>
-              <VehicleIcon size={20} color={Colors.textSecondary} />
+            <View style={[styles.vehicleIconBox, { backgroundColor: colors.surfaceElevated }]}>
+              <VehicleIcon size={20} color={colors.textSecondary} />
             </View>
             <View style={styles.vehicleTextBlock}>
-              <Text style={styles.vehicleName}>Mercedes Benz Sprinter</Text>
-              <Text style={styles.vehiclePlate}>GW-12903-22</Text>
+              <Text style={[styles.vehicleName, { color: colors.textPrimary }]}>Mercedes Benz Sprinter</Text>
+              <Text style={[styles.vehiclePlate, { color: colors.textSecondary }]}>GW-12903-22</Text>
             </View>
             <View style={styles.moversRow}>
-              <UsersIcon size={15} color={Colors.textSecondary} />
-              <Text style={styles.scMoversText}>2 movers</Text>
+              <UsersIcon size={15} color={colors.textSecondary} />
+              <Text style={[styles.scMoversText, { color: colors.textSecondary }]}>2 movers</Text>
             </View>
           </View>
         )}
@@ -287,24 +290,24 @@ export default function ServiceCard({
         {/* ── Buttons ─────────────────────────────────────────────────────────── */}
         {isEnRoute ? (
           <>
-            <TouchableOpacity style={styles.scCallBtnAbs} activeOpacity={0.8} onPress={onCall}>
-              <CallIcon size={24} color="#0D121C" />
-              <Text style={styles.scBtnLabel}>Call</Text>
+            <TouchableOpacity style={[styles.scCallBtnAbs, { borderColor: colors.textSecondary }]} activeOpacity={0.8} onPress={onCall}>
+              <CallIcon size={24} color={colors.textPrimary} />
+              <Text style={[styles.scBtnLabel, { color: colors.textPrimary }]}>Call</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.scMsgBtnAbs} activeOpacity={0.8} onPress={onMessage}>
-              <MessageIcon size={24} color="#0D121C" />
-              <Text style={styles.scBtnLabel}>Message</Text>
+            <TouchableOpacity style={[styles.scMsgBtnAbs, { borderColor: colors.textSecondary }]} activeOpacity={0.8} onPress={onMessage}>
+              <MessageIcon size={24} color={colors.textPrimary} />
+              <Text style={[styles.scBtnLabel, { color: colors.textPrimary }]}>Message</Text>
             </TouchableOpacity>
           </>
         ) : showButtons ? (
           <View style={styles.buttonsRow}>
-            <TouchableOpacity style={styles.actionBtn} activeOpacity={0.8} onPress={onCall}>
-              <CallIcon size={24} color="#0D121C" />
-              <Text style={styles.scBtnLabel}>Call</Text>
+            <TouchableOpacity style={[styles.actionBtn, { borderColor: colors.textSecondary }]} activeOpacity={0.8} onPress={onCall}>
+              <CallIcon size={24} color={colors.textPrimary} />
+              <Text style={[styles.scBtnLabel, { color: colors.textPrimary }]}>Call</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.actionBtn} activeOpacity={0.8} onPress={onMessage}>
-              <MessageIcon size={24} color="#0D121C" />
-              <Text style={styles.scBtnLabel}>Message</Text>
+            <TouchableOpacity style={[styles.actionBtn, { borderColor: colors.textSecondary }]} activeOpacity={0.8} onPress={onMessage}>
+              <MessageIcon size={24} color={colors.textPrimary} />
+              <Text style={[styles.scBtnLabel, { color: colors.textPrimary }]}>Message</Text>
             </TouchableOpacity>
           </View>
         ) : null}
@@ -312,10 +315,10 @@ export default function ServiceCard({
 
       {/* ── Payment card (awaiting_payment) ──────────────────────────────────── */}
       {status === 'awaiting_payment' && (
-        <View style={styles.paymentCard}>
+        <View style={[styles.paymentCard, { backgroundColor: colors.surface }]}>
           <View style={styles.paymentAmountRow}>
             <Text style={styles.paymentAmount}>$55</Text>
-            <Text style={styles.paymentAmountLabel}>Amount to pay</Text>
+            <Text style={[styles.paymentAmountLabel, { color: colors.textSecondary }]}>Amount to pay</Text>
           </View>
 
           <View style={styles.paymentNotice}>
@@ -336,11 +339,11 @@ export default function ServiceCard({
 
       {/* ── Confirmation banner (awaiting_mover_confirmation) ──────────────────── */}
       {status === 'awaiting_mover_confirmation' && (
-        <View style={styles.confirmationCard}>
+        <View style={[styles.confirmationCard, { backgroundColor: colors.surface }]}>
           <View style={styles.confirmIconWrap}>
             <CheckCircleIcon size={20} />
           </View>
-          <Text style={styles.confirmationText}>
+          <Text style={[styles.confirmationText, { color: colors.textPrimary }]}>
             Payment confirmed! Waiting for mover to confirm receipt...
           </Text>
         </View>
@@ -348,25 +351,25 @@ export default function ServiceCard({
 
       {/* ── Review card (move_completed) ───────────────────────────────────────── */}
       {status === 'move_completed' && (
-        <View style={styles.reviewCard}>
+        <View style={[styles.reviewCard, { backgroundColor: colors.surface }]}>
           {/* Header: check badge + title + subtitle + stars */}
           <View style={styles.reviewHeader}>
             <CheckCircleIcon size={28} />
-            <Text style={styles.reviewTitle}>Move Completed</Text>
-            <Text style={styles.reviewSubtitle}>
+            <Text style={[styles.reviewTitle, { color: colors.textPrimary }]}>Move Completed</Text>
+            <Text style={[styles.reviewSubtitle, { color: colors.textSecondary }]}>
               How was your experience with William Jane
             </Text>
             <StarRating rating={rating} onChange={setRating} />
           </View>
 
-          <View style={styles.reviewDivider} />
+          <View style={[styles.reviewDivider, { backgroundColor: colors.divider }]} />
 
           {/* Comment textarea + buttons */}
           <View style={styles.reviewBody}>
             <TextInput
-              style={styles.commentInput}
+              style={[styles.commentInput, { borderColor: colors.textSecondary, color: colors.textPrimary, backgroundColor: colors.surface }]}
               placeholder="Add a comment (optional)"
-              placeholderTextColor="#697586"
+              placeholderTextColor={colors.placeholder}
               multiline
               value={comment}
               onChangeText={setComment}
@@ -375,11 +378,11 @@ export default function ServiceCard({
 
             <View style={styles.reviewButtonsRow}>
               <TouchableOpacity
-                style={styles.skipBtn}
+                style={[styles.skipBtn, { borderColor: colors.textSecondary }]}
                 activeOpacity={0.8}
                 onPress={onSkipReview}
               >
-                <Text style={styles.skipBtnLabel}>Skip</Text>
+                <Text style={[styles.skipBtnLabel, { color: colors.textPrimary }]}>Skip</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -407,7 +410,6 @@ const styles = StyleSheet.create({
 
   // ── Primary service card ──────────────────────────────────────────────────
   serviceCard: {
-    backgroundColor: Colors.white,
     borderRadius: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -1 },
@@ -458,7 +460,6 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.medium,
     fontSize: 12,
     lineHeight: 16,
-    color: '#0D121C',
   },
   scRatingRow: {
     flexDirection: 'row',
@@ -469,14 +470,12 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.regular,
     fontSize: 10,
     lineHeight: 16,
-    color: '#697586',
     letterSpacing: 0.15,
   },
   scMovesText: {
     fontFamily: FontFamily.regular,
     fontSize: 10,
     lineHeight: 16,
-    color: '#697586',
     letterSpacing: 0.15,
   },
   headerRightBlock: { alignItems: 'flex-end', flexShrink: 0, marginLeft: 8 },
@@ -484,14 +483,12 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.medium,
     fontSize: 14,
     lineHeight: 20,
-    color: '#0D121C',
     textAlign: 'right',
   },
   etaTime: {
     fontFamily: FontFamily.regular,
     fontSize: 10,
     lineHeight: 16,
-    color: '#697586',
     textAlign: 'right',
   },
   priceText: {
@@ -527,7 +524,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#3475F2',
   },
 
-  scDivider: { height: 0.5, backgroundColor: '#CDD5DF' },
+  scDivider: { height: 0.5 },
 
   // ── Status banner ─────────────────────────────────────────────────────────
   bannerRow: {
@@ -570,7 +567,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 10,
-    backgroundColor: '#E3E8EF',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -581,7 +577,6 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.medium,
     fontSize: 12,
     lineHeight: 16,
-    color: '#0D121C',
   },
   scVehiclePlateAbs: {
     position: 'absolute',
@@ -590,7 +585,6 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.regular,
     fontSize: 10,
     lineHeight: 16,
-    color: '#697586',
   },
   scMoversGroupAbs: {
     position: 'absolute',
@@ -604,7 +598,6 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.regular,
     fontSize: 10,
     lineHeight: 16,
-    color: '#697586',
     letterSpacing: 0.15,
   },
 
@@ -621,7 +614,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 10,
-    backgroundColor: '#E3E8EF',
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
@@ -631,13 +623,11 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.medium,
     fontSize: 12,
     lineHeight: 16,
-    color: '#0D121C',
   },
   vehiclePlate: {
     fontFamily: FontFamily.regular,
     fontSize: 10,
     lineHeight: 16,
-    color: '#697586',
   },
   moversRow: {
     flexDirection: 'row',
@@ -655,7 +645,6 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 40,
     borderWidth: 1,
-    borderColor: '#697586',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -669,7 +658,6 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 40,
     borderWidth: 1,
-    borderColor: '#697586',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -691,7 +679,6 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 40,
     borderWidth: 1,
-    borderColor: '#697586',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -701,13 +688,11 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.semibold,
     fontSize: 16,
     lineHeight: 22.4,
-    color: '#0D121C',
   },
 
   // ── Payment card ──────────────────────────────────────────────────────────
   paymentCard: {
     height: 261,
-    backgroundColor: Colors.white,
     borderRadius: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -730,7 +715,6 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.regular,
     fontSize: 10,
     lineHeight: 16,
-    color: '#697586',
     textAlign: 'center',
     letterSpacing: 0.15,
   },
@@ -766,7 +750,6 @@ const styles = StyleSheet.create({
   // ── Confirmation card ─────────────────────────────────────────────────────
   confirmationCard: {
     height: 50,
-    backgroundColor: Colors.white,
     borderRadius: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -784,13 +767,11 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.regular,
     fontSize: 12,
     lineHeight: 16.8,
-    color: '#0D121C',
   },
 
   // ── Review card ───────────────────────────────────────────────────────────
   reviewCard: {
     height: 313,
-    backgroundColor: Colors.white,
     borderRadius: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -811,7 +792,6 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.semibold,
     fontSize: 16,
     lineHeight: 22,
-    color: '#0D121C',
     textAlign: 'center',
     marginTop: 4,
   },
@@ -819,7 +799,6 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.regular,
     fontSize: 10,
     lineHeight: 16,
-    color: '#697586',
     textAlign: 'center',
     letterSpacing: 0.15,
   },
@@ -832,7 +811,6 @@ const styles = StyleSheet.create({
 
   reviewDivider: {
     height: 0.5,
-    backgroundColor: '#CDD5DF',
     marginTop: 12,
   },
 
@@ -847,13 +825,11 @@ const styles = StyleSheet.create({
   commentInput: {
     height: 82,
     borderWidth: 1,
-    borderColor: '#697586',
     borderRadius: 16,
     padding: 12,
     fontFamily: FontFamily.regular,
     fontSize: 13,
     lineHeight: 18,
-    color: '#0D121C',
   },
   reviewButtonsRow: {
     flexDirection: 'row',
@@ -866,7 +842,6 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 40,
     borderWidth: 1,
-    borderColor: '#697586',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -874,7 +849,6 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.semibold,
     fontSize: 16,
     lineHeight: 22.4,
-    color: '#0D121C',
   },
   submitBtn: {
     flex: 1,

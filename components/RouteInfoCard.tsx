@@ -1,7 +1,8 @@
 import { StyleSheet, Text, View } from 'react-native';
 
 import { RouteConnectorIcon } from '@/components/ui/pickup-icons';
-import { Colors, FontFamily } from '@/constants/theme';
+import { FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 
 interface RouteInfoCardProps {
   top: number;
@@ -20,29 +21,30 @@ export default function RouteInfoCard({
   distance = '1.1 km',
   eta = '3min',
 }: RouteInfoCardProps) {
+  const { colors } = useAppTheme();
   return (
-    <View style={[styles.routeCard, { top }]}>
+    <View style={[styles.routeCard, { top, backgroundColor: colors.surface }]}>
 
       {/* Pick Up row */}
       <View style={styles.rcPickRow}>
         <View style={styles.rcLocBlock}>
-          <Text style={styles.rcLocLabel}>Pick Up Location</Text>
-          <Text style={styles.rcLocValue}>{pickupLocation}, {pickupRegion}</Text>
+          <Text style={[styles.rcLocLabel, { color: colors.textSecondary }]}>Pick Up Location</Text>
+          <Text style={[styles.rcLocValue, { color: colors.textPrimary }]}>{pickupLocation}, {pickupRegion}</Text>
         </View>
         <View style={styles.rcEtaBlock}>
-          <Text style={styles.rcEtaDist}>{distance}</Text>
-          <Text style={styles.rcEtaTime}>{eta}</Text>
+          <Text style={[styles.rcEtaDist, { color: colors.textPrimary }]}>{distance}</Text>
+          <Text style={[styles.rcEtaTime, { color: colors.textSecondary }]}>{eta}</Text>
         </View>
       </View>
 
       {/* Horizontal divider */}
-      <View style={styles.rcDivider} />
+      <View style={[styles.rcDivider, { backgroundColor: colors.divider }]} />
 
       {/* Drop off row */}
       <View style={styles.rcDropRow}>
         <View style={styles.rcLocBlock}>
-          <Text style={styles.rcLocLabel}>Drop off Location</Text>
-          <Text style={styles.rcLocValue}>{dropoffLocation}</Text>
+          <Text style={[styles.rcLocLabel, { color: colors.textSecondary }]}>Drop off Location</Text>
+          <Text style={[styles.rcLocValue, { color: colors.textPrimary }]}>{dropoffLocation}</Text>
         </View>
       </View>
 
@@ -61,7 +63,6 @@ const styles = StyleSheet.create({
     left: 19,
     width: 343,
     height: 118,
-    backgroundColor: Colors.white,
     borderRadius: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -83,7 +84,6 @@ const styles = StyleSheet.create({
   },
   rcDivider: {
     height: 0.5,
-    backgroundColor: '#CDD5DF',
   },
   // Drop-off row — bottom section, paddingLeft 38
   rcDropRow: {
@@ -99,28 +99,24 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.regular,
     fontSize: 10,
     lineHeight: 16,
-    color: '#697586',
     letterSpacing: 0.15,
   },
   rcLocValue: {
     fontFamily: FontFamily.medium,
     fontSize: 12,
     lineHeight: 16,
-    color: '#0D121C',
   },
   rcEtaBlock: { alignItems: 'flex-end', flexShrink: 0, marginLeft: 8 },
   rcEtaDist: {
     fontFamily: FontFamily.medium,
     fontSize: 14,
     lineHeight: 20,
-    color: '#0D121C',
     textAlign: 'right',
   },
   rcEtaTime: {
     fontFamily: FontFamily.regular,
     fontSize: 10,
     lineHeight: 16,
-    color: '#697586',
     textAlign: 'right',
   },
   // Connector SVG: absolute at left 23, top 37

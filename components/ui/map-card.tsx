@@ -6,6 +6,7 @@ import {
   RouteDirectionIcon,
 } from '@/components/ui/pickup-icons';
 import { Colors, FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 
 interface MapCardProps {
   fromName?: string;
@@ -20,26 +21,27 @@ export function MapCard({
   hideLocationPanel = false,
   onGpsPress,
 }: MapCardProps) {
+  const { colors } = useAppTheme();
   return (
-    <View style={styles.mapCard}>
-      <View style={styles.mapPlaceholder}>
-        <Text style={styles.mapPlaceholderText}>Map Preview</Text>
-        <TouchableOpacity style={styles.gpsBtn} activeOpacity={0.8} onPress={onGpsPress}>
+    <View style={[styles.mapCard, { borderColor: colors.textSecondary }]}>
+      <View style={[styles.mapPlaceholder, { backgroundColor: colors.surface }]}>
+        <Text style={[styles.mapPlaceholderText, { color: colors.textSecondary }]}>Map Preview</Text>
+        <TouchableOpacity style={[styles.gpsBtn, { backgroundColor: colors.background }]} activeOpacity={0.8} onPress={onGpsPress}>
           <GpsTargetIcon size={24} color={Colors.primary} />
         </TouchableOpacity>
       </View>
       {!hideLocationPanel && (
-        <View style={styles.locationPanel}>
+        <View style={[styles.locationPanel, { backgroundColor: colors.background }]}>
           <View style={styles.locationIcons}>
-            <PickupPinIcon size={24} color={Colors.textSecondary} />
-            <RouteDirectionIcon size={24} color={Colors.textSecondary} />
+            <PickupPinIcon size={24} color={colors.textSecondary} />
+            <RouteDirectionIcon size={24} color={colors.textSecondary} />
           </View>
           <View style={styles.locationTexts}>
-            <Text style={styles.locationText} numberOfLines={1}>
+            <Text style={[styles.locationText, { color: colors.textSecondary }]} numberOfLines={1}>
               {fromName || 'Pick up location'}
             </Text>
-            <View style={styles.locationDivider} />
-            <Text style={styles.locationText} numberOfLines={1}>
+            <View style={[styles.locationDivider, { backgroundColor: colors.textSecondary }]} />
+            <Text style={[styles.locationText, { color: colors.textSecondary }]} numberOfLines={1}>
               {toName || 'Drop off location'}
             </Text>
           </View>
@@ -54,18 +56,15 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     overflow: 'hidden',
     borderWidth: 0.5,
-    borderColor: Colors.textSecondary,
   },
   mapPlaceholder: {
     height: 200,
-    backgroundColor: '#E8EDF2',
     alignItems: 'center',
     justifyContent: 'center',
   },
   mapPlaceholderText: {
     fontFamily: FontFamily.regular,
     fontSize: 14,
-    color: Colors.textSecondary,
   },
   gpsBtn: {
     position: 'absolute',
@@ -74,7 +73,6 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 9999,
-    backgroundColor: Colors.white,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
@@ -89,7 +87,6 @@ const styles = StyleSheet.create({
     gap: 12,
     paddingHorizontal: 14,
     paddingVertical: 14,
-    backgroundColor: Colors.white,
   },
   locationIcons: {
     alignItems: 'center',
@@ -104,11 +101,9 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.medium,
     fontSize: 16,
     lineHeight: 22.4,
-    color: Colors.textSecondary,
   },
   locationDivider: {
     height: 0.5,
-    backgroundColor: Colors.textSecondary,
     width: '100%',
   },
 });

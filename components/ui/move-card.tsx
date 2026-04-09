@@ -12,12 +12,13 @@ import { Colors, FontFamily } from '@/constants/theme';
 
 interface MoveCardProps {
   image?: ImageSourcePropType;
-  city: string;
+  city?: string;
   title: string;
   price: string;
   route: string;
   address: string;
   onPress?: () => void;
+  compact?: boolean;
 }
 
 export function MoveCard({
@@ -28,9 +29,13 @@ export function MoveCard({
   route,
   address,
   onPress,
+  compact,
 }: MoveCardProps) {
   return (
-    <TouchableOpacity onPress={onPress} activeOpacity={0.92} style={styles.card}>
+    <TouchableOpacity
+      onPress={onPress}
+      activeOpacity={0.92}
+      style={[styles.card, compact && styles.cardCompact]}>
       <ImageBackground
         source={image}
         style={styles.bg}
@@ -41,13 +46,17 @@ export function MoveCard({
           <View style={styles.overlay} />
         </View>
 
-        {/* Location badge — top left */}
-        <View style={styles.topRow}>
-          <View style={styles.cityBadge}>
-            <CardCityPinIcon size={18} />
-            <Text style={styles.cityText}>{city}</Text>
+        {/* Location badge — top left (only when city provided) */}
+        {city ? (
+          <View style={styles.topRow}>
+            <View style={styles.cityBadge}>
+              <CardCityPinIcon size={18} />
+              <Text style={styles.cityText}>{city}</Text>
+            </View>
           </View>
-        </View>
+        ) : (
+          <View />
+        )}
 
         {/* Details panel — bottom */}
         <View style={styles.detailsPanel}>
@@ -74,6 +83,10 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     height: 220,
     width: '100%',
+  },
+  cardCompact: {
+    height: 165,
+    borderRadius: 12,
   },
   bg: {
     flex: 1,
