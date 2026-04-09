@@ -20,6 +20,7 @@ import {
   SmallCheckedIcon,
 } from '@/components/ui/booking/move-summary-cards';
 import { Colors, FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -72,12 +73,12 @@ function or(val: string | undefined, fallback = 'Not specified') {
 
 // ── Local icons ───────────────────────────────────────────────────────────────
 
-function ArrowRightIcon() {
+function ArrowRightIcon({ color = Colors.textPrimary }: { color?: string }) {
   return (
     <Svg width={20} height={20} viewBox="0 0 20 20" fill="none">
       <Path
         d="M4 10h12M11 5l5 5-5 5"
-        stroke={Colors.textPrimary}
+        stroke={color}
         strokeWidth={1.8}
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -121,12 +122,12 @@ function BackArrowIcon() {
   );
 }
 
-function MapPinIcon() {
+function MapPinIcon({ color = Colors.textSecondary }: { color?: string }) {
   return (
     <Svg width={16} height={16} viewBox="0 0 16 16" fill="none">
       <Path
         d="M8 1.5C5.79086 1.5 4 3.29086 4 5.5C4 8.5 8 14.5 8 14.5C8 14.5 12 8.5 12 5.5C12 3.29086 10.2091 1.5 8 1.5Z"
-        fill={Colors.textSecondary}
+        fill={color}
       />
       <Circle cx={8} cy={5.5} r={1.5} fill="white" />
     </Svg>
@@ -188,6 +189,7 @@ const HERO_MIN      = Math.round(SCREEN_HEIGHT * 0.12);
 
 export default function MoveDetailsScreen() {
   const insets = useSafeAreaInsets();
+  const { colors } = useAppTheme();
 
   const scrollY    = useRef(new Animated.Value(0)).current;
   const heroHeight = scrollY.interpolate({
@@ -225,7 +227,7 @@ export default function MoveDetailsScreen() {
   const toCity   = params.toName   || (params.toAddress   ?? '').split(',')[0] || 'Destination';
 
   return (
-    <View style={s.root}>
+    <View style={[s.root, { backgroundColor: colors.background }]}>
       <Animated.View style={[s.hero, { height: heroHeight }]}>
         {heroUri ? (
           <Image source={{ uri: heroUri }} style={s.heroImg} resizeMode="cover" />
@@ -294,15 +296,15 @@ export default function MoveDetailsScreen() {
 
           {/* From → To */}
           <View style={s.routeRow}>
-            <Text style={s.routeCity}>{fromCity}</Text>
-            <ArrowRightIcon />
-            <Text style={s.routeCity}>{toCity}</Text>
+            <Text style={[s.routeCity, { color: colors.textPrimary }]}>{fromCity}</Text>
+            <ArrowRightIcon color={colors.textPrimary} />
+            <Text style={[s.routeCity, { color: colors.textPrimary }]}>{toCity}</Text>
           </View>
 
           {/* Location subtitle */}
           <View style={s.locationSubRow}>
-            <MapPinIcon />
-            <Text style={s.locationSubText}>
+            <MapPinIcon color={colors.textSecondary} />
+            <Text style={[s.locationSubText, { color: colors.textSecondary }]}>
               {params.fromAddress || 'Origin address'}
             </Text>
           </View>
@@ -311,7 +313,7 @@ export default function MoveDetailsScreen() {
         {/* ── Gallery ───────────────────────────────────────────────────────── */}
         <View style={s.gallerySection}>
           <View style={s.galleryHeader}>
-            <Text style={s.galleryTitle}>Gallery</Text>
+            <Text style={[s.galleryTitle, { color: colors.textPrimary }]}>Gallery</Text>
             <Text style={s.gallerySeeAll}>See all</Text>
           </View>
           <View style={s.galleryRow}>
@@ -367,16 +369,16 @@ export default function MoveDetailsScreen() {
         {/* Move Items (2-column tag layout, not in a card) */}
         {inventoryItems.length > 0 && (
           <View style={s.moveItemsSection}>
-            <Text style={s.moveItemsTitle}>Move Items</Text>
+            <Text style={[s.moveItemsTitle, { color: colors.textPrimary }]}>Move Items</Text>
             <View style={s.moveItemsGrid}>
               <View style={s.moveItemsCol}>
                 {inventoryItems.filter((_, i) => i % 2 === 0).map((item) => (
-                  <Text key={item.label} style={s.moveItemTag}>{item.label}</Text>
+                  <Text key={item.label} style={[s.moveItemTag, { color: colors.textPrimary }]}>{item.label}</Text>
                 ))}
               </View>
               <View style={s.moveItemsCol}>
                 {inventoryItems.filter((_, i) => i % 2 === 1).map((item) => (
-                  <Text key={item.label} style={s.moveItemTag}>{item.label}</Text>
+                  <Text key={item.label} style={[s.moveItemTag, { color: colors.textPrimary }]}>{item.label}</Text>
                 ))}
               </View>
             </View>
@@ -429,8 +431,8 @@ export default function MoveDetailsScreen() {
               value={`€${services.length > 0 ? (services.length * 50).toFixed(2) : '0.00'}`}
             />
             <View style={s.totalRow}>
-              <Text style={s.totalLabel}>Total</Text>
-              <Text style={s.totalValue}>€{(15 + services.length * 50).toFixed(2)}</Text>
+              <Text style={[s.totalLabel, { color: colors.textPrimary }]}>Total</Text>
+              <Text style={[s.totalValue, { color: colors.textPrimary }]}>€{(15 + services.length * 50).toFixed(2)}</Text>
             </View>
           </View>
         </ReviewCard>
@@ -439,16 +441,16 @@ export default function MoveDetailsScreen() {
         <ReviewCard padH15>
           <View style={s.paymentRow}>
             <Text style={s.paymentLabel}>Payment method</Text>
-            <Text style={s.paymentValue}>{paymentLabel}</Text>
+            <Text style={[s.paymentValue, { color: colors.textPrimary }]}>{paymentLabel}</Text>
           </View>
         </ReviewCard>
 
         {/* ── Location section ─────────────────────────────────────────────── */}
         <View style={s.locationSection}>
-          <Text style={s.locationTitle}>Location</Text>
+          <Text style={[s.locationTitle, { color: colors.textPrimary }]}>Location</Text>
           <View style={s.locationAddressRow}>
             <LocationPinIcon />
-            <Text style={s.locationAddress}>{params.streetAddress || '—'}</Text>
+            <Text style={[s.locationAddress, { color: colors.textPrimary }]}>{params.streetAddress || '—'}</Text>
           </View>
           {/* Map */}
           <View style={s.mapContainer}>
@@ -496,7 +498,7 @@ export default function MoveDetailsScreen() {
       </Animated.ScrollView>
 
       {/* ── Fixed footer ─────────────────────────────────────────────────── */}
-      <View style={[s.footer, { paddingBottom: insets.bottom + 8 }]}>
+      <View style={[s.footer, { paddingBottom: insets.bottom + 8, backgroundColor: colors.background }]}>
         <TouchableOpacity
           style={s.trackBtn}
           activeOpacity={0.85}
@@ -511,7 +513,7 @@ export default function MoveDetailsScreen() {
 // ── Styles ────────────────────────────────────────────────────────────────────
 
 const s = StyleSheet.create({
-  root:   { flex: 1, backgroundColor: '#F9FAFB' },
+  root:   { flex: 1 },
 
   // Hero
   hero: {
@@ -627,7 +629,6 @@ const s = StyleSheet.create({
     fontFamily: FontFamily.bold,
     fontSize: 20,
     lineHeight: 28,
-    color: Colors.textPrimary,
   },
   locationSubRow: {
     flexDirection: 'row',
@@ -638,7 +639,6 @@ const s = StyleSheet.create({
     fontFamily: FontFamily.medium,
     fontSize: 12,
     lineHeight: 16.8,
-    color: Colors.textSecondary,
   },
 
   // Gallery
@@ -648,7 +648,6 @@ const s = StyleSheet.create({
     fontFamily: FontFamily.bold,
     fontSize: 16,
     lineHeight: 22.4,
-    color: Colors.textPrimary,
   },
   gallerySeeAll: {
     fontFamily: FontFamily.medium,
@@ -672,7 +671,6 @@ const s = StyleSheet.create({
     fontFamily: FontFamily.bold,
     fontSize: 16,
     lineHeight: 22.4,
-    color: Colors.textPrimary,
   },
   moveItemsGrid:   { flexDirection: 'row', justifyContent: 'space-between' },
   moveItemsCol:    { gap: 16, flex: 1 },
@@ -680,7 +678,6 @@ const s = StyleSheet.create({
     fontFamily: FontFamily.medium,
     fontSize: 14,
     lineHeight: 19.6,
-    color: Colors.textPrimary,
   },
 
   // Services list
@@ -701,13 +698,13 @@ const s = StyleSheet.create({
   estimatedAmount: { fontFamily: FontFamily.bold,   fontSize: 18, lineHeight: 26, color: Colors.primary },
   pricingNote:     { fontFamily: FontFamily.medium, fontSize: 14, lineHeight: 26, color: Colors.textSecondary },
   totalRow:  { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 12 },
-  totalLabel:{ fontFamily: FontFamily.bold, fontSize: 16, lineHeight: 20, color: Colors.textPrimary },
-  totalValue:{ fontFamily: FontFamily.medium, fontSize: 16, lineHeight: 24, color: '#171717' },
+  totalLabel:{ fontFamily: FontFamily.bold, fontSize: 16, lineHeight: 20 },
+  totalValue:{ fontFamily: FontFamily.medium, fontSize: 16, lineHeight: 24 },
 
   // Payment
   paymentRow:  { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 10 },
   paymentLabel:{ fontFamily: FontFamily.bold, fontSize: 16, lineHeight: 20, color: Colors.textSecondary },
-  paymentValue:{ fontFamily: FontFamily.medium, fontSize: 16, lineHeight: 24, color: '#171717' },
+  paymentValue:{ fontFamily: FontFamily.medium, fontSize: 16, lineHeight: 24 },
 
   // Location section
   locationSection: { gap: 12 },
@@ -715,14 +712,12 @@ const s = StyleSheet.create({
     fontFamily: FontFamily.bold,
     fontSize: 16,
     lineHeight: 22.4,
-    color: Colors.textPrimary,
   },
   locationAddressRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   locationAddress: {
     fontFamily: FontFamily.regular,
     fontSize: 14,
     lineHeight: 19.6,
-    color: Colors.textPrimary,
   },
   mapContainer:    { height: 152, borderRadius: 16, overflow: 'hidden', backgroundColor: '#D0D0D0' },
   mapImg:          { width: '100%', height: '100%' },
@@ -747,7 +742,6 @@ const s = StyleSheet.create({
     position: 'absolute',
     bottom: 0, left: 0, right: 0,
     zIndex: 1,
-    backgroundColor: Colors.white,
     paddingTop: 16,
     paddingHorizontal: 20,
     shadowColor: '#000',

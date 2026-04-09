@@ -14,6 +14,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import RouteInfoCard from '@/components/RouteInfoCard';
 import ServiceCard, { MoveStatus } from '@/components/ServiceCard';
 import { Colors, FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 
 // ── Map overlay decorative assets ────────────────────────────────────────────
 const MAP_IMG    = 'https://www.figma.com/api/mcp/asset/7cd54e0b-d3fe-433c-997e-af6a84b2abe1';
@@ -28,6 +29,7 @@ const DEMO_STATUS: MoveStatus = 'mover_arrived';
 
 export default function TrackMoveScreen() {
   const insets = useSafeAreaInsets();
+  const { colors } = useAppTheme();
 
   // Cancel button sits 8 pt above the safe-area bottom
   const cancelBottom = insets.bottom + 8;
@@ -119,7 +121,7 @@ export default function TrackMoveScreen() {
 
       {/* ── Exit reveal overlay — white circle that expands on cancel ─────── */}
       <Animated.View
-        style={[StyleSheet.absoluteFill, styles.cancelRevealBg, cancelBgStyle]}
+        style={[StyleSheet.absoluteFill, { backgroundColor: colors.background }, cancelBgStyle]}
         pointerEvents="none"
       />
     </View>
