@@ -7,10 +7,12 @@ import { StyleSheet, Text, View } from 'react-native';
 import { FontFamily } from '@/constants/theme';
 import { useAppTheme } from '@/context/theme-context';
 
-const logo = require('@/assets/images/logo.png');
+const logoLight = require('@/assets/images/logo.png');
+const logoDark = require('@/assets/images/logoDark.png');
 
 export default function SplashScreen() {
   const { colors, isDark } = useAppTheme();
+  const logo = isDark ? logoDark : logoLight;
 
   useEffect(() => {
     const timer = setTimeout(() => {
