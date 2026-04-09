@@ -610,6 +610,7 @@ const s = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 6,
+    marginTop: 20,
     height: 36,
     alignItems: 'center',
     justifyContent: 'center',

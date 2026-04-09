@@ -260,11 +260,9 @@ export function StepMoveReview({ onConsentChange }: StepMoveReviewProps) {
             label="Additional services"
             value={`€${selectedServices.length > 0 ? (selectedServices.length * 50).toFixed(2) : '0.00'}`}
           />
-          <View style={[s.row, s.rowSolidNoBorder]}>
-            <Text style={[s.rowLabel, s.totalLabel]}>Total</Text>
-            <Text style={s.rowValue}>
-              €{(15 + selectedServices.length * 50).toFixed(2)}
-            </Text>
+          <View style={s.totalRow}>
+            <Text style={[s.totalLabel, { color: colors.textPrimary }]}>Total</Text>
+            <Text style={[s.totalValue, { color: colors.textPrimary }]}>€{(15 + selectedServices.length * 50).toFixed(2)}</Text>
           </View>
         </View>
       </View>
@@ -359,8 +357,10 @@ const s = StyleSheet.create({
   estimatedLabel: { fontFamily: FontFamily.medium, fontSize: 14, lineHeight: 26 },
   estimatedAmount: { fontFamily: FontFamily.bold, fontSize: 18, lineHeight: 26, color: Colors.primary },
   pricingNote: { fontFamily: FontFamily.medium, fontSize: 14, lineHeight: 26 },
-  totalLabel: { fontFamily: FontFamily.bold, color: Colors.textPrimary },
   paymentMethodLabel: { fontFamily: FontFamily.bold },
+  totalRow:  { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 12 },
+  totalLabel:{ fontFamily: FontFamily.bold, fontSize: 16, lineHeight: 20 },
+  totalValue:{ fontFamily: FontFamily.medium, fontSize: 16, lineHeight: 24 },
 
   // Consent
   consentSection: { gap: 16 },
