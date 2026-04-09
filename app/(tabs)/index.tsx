@@ -98,12 +98,13 @@ function CategoryChip({
   active: boolean;
   onPress: () => void;
 }) {
+  const { colors } = useAppTheme();
   return (
     <TouchableOpacity
-      style={[chip.base, active ? chip.active : chip.inactive]}
+      style={[chip.base, active ? chip.active : [chip.inactive, { borderColor: colors.borderDark }]]}
       onPress={onPress}
       activeOpacity={0.8}>
-      <Text style={[chip.label, active ? chip.labelActive : chip.labelInactive]}>
+      <Text style={[chip.label, active ? chip.labelActive : { color: colors.textSecondary }]}>
         {label}
       </Text>
     </TouchableOpacity>
@@ -119,10 +120,10 @@ const chip = StyleSheet.create({
     justifyContent: 'center',
   },
   active: { backgroundColor: Colors.primary },
-  inactive: { backgroundColor: Colors.white, borderWidth: 1, borderColor: Colors.textSecondary },
+  inactive: { borderWidth: 1 },
   label: { fontSize: 14, lineHeight: 19.6, textAlign: 'center' },
   labelActive: { fontFamily: FontFamily.semibold, color: Colors.white },
-  labelInactive: { fontFamily: FontFamily.medium, color: Colors.textSecondary },
+  labelInactive: { fontFamily: FontFamily.medium },
 });
 
 // ── Mock move data ────────────────────────────────────────────────────────────
