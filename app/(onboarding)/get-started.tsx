@@ -7,12 +7,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { GoogleIcon } from '@/components/ui/google-icon';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/auth-context';
-import { Colors, FontFamily, TextStyles } from '@/constants/theme';
+import { Colors, TextStyles } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 
 const logo = require('@/assets/images/logo.png');
 
 export default function GetStartedScreen() {
   const { markOnboardingComplete } = useAuth();
+  const { colors, isDark } = useAppTheme();
 
   const handleSignUpEmail = async () => {
     await markOnboardingComplete();
@@ -30,8 +32,8 @@ export default function GetStartedScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="dark" />
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <StatusBar style={isDark ? 'light' : 'dark'} />
 
       {/* Centre block: logo + heading + buttons */}
       <View style={styles.centreBlock}>
@@ -42,8 +44,8 @@ export default function GetStartedScreen() {
 
         {/* Heading text */}
         <View style={styles.textBlock}>
-          <Text style={styles.heading}>Lets Get Started</Text>
-          <Text style={styles.subheading}>A stress-free move, every time.</Text>
+          <Text style={[styles.heading, { color: colors.textPrimary }]}>Lets Get Started</Text>
+          <Text style={[styles.subheading, { color: colors.textSecondary }]}>A stress-free move, every time.</Text>
         </View>
 
         {/* Buttons */}
@@ -54,7 +56,7 @@ export default function GetStartedScreen() {
             onPress={handleSignUpEmail}
           />
 
-          <Text style={styles.orText}>Or Use Instant Sign Up</Text>
+          <Text style={[styles.orText, { color: colors.textPrimary }]}>Or Use Instant Sign Up</Text>
 
           <Button
             label="Sign Up with Google"
@@ -67,7 +69,7 @@ export default function GetStartedScreen() {
 
       {/* Bottom: Already have an account */}
       <View style={styles.footer}>
-        <Text style={styles.footerText}>Already Have an Account? </Text>
+        <Text style={[styles.footerText, { color: colors.textSecondary }]}>Already Have an Account? </Text>
         <TouchableOpacity onPress={handleSignIn} activeOpacity={0.7}>
           <Text style={styles.footerLink}>Sign In</Text>
         </TouchableOpacity>
@@ -79,7 +81,7 @@ export default function GetStartedScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: undefined,
   },
 
   // Centre block — vertically centred in available space
@@ -109,12 +111,12 @@ const styles = StyleSheet.create({
   },
   heading: {
     ...TextStyles.h4,
-    color: Colors.textPrimary,
+    color: undefined,
     textAlign: 'center',
   },
   subheading: {
     ...TextStyles.bodyMediumRegular,
-    color: Colors.textSecondary,
+    color: undefined,
     textAlign: 'center',
   },
 
@@ -126,7 +128,7 @@ const styles = StyleSheet.create({
   },
   orText: {
     ...TextStyles.bodySmallRegular,
-    color: Colors.textPrimary,
+    color: undefined,
     textAlign: 'center',
   },
 
@@ -140,7 +142,7 @@ const styles = StyleSheet.create({
   },
   footerText: {
     ...TextStyles.bodySmallMedium,
-    color: Colors.textSecondary,
+    color: undefined,
   },
   footerLink: {
     ...TextStyles.bodySmallMedium,

@@ -8,12 +8,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from '@/components/ui/button';
 import { OtpInput } from '@/components/ui/otp-input';
 import { Colors, FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 
 const OTP_LENGTH = 4;
 const RESEND_SECONDS = 48;
 
 export default function EnterOtpScreen() {
   const [otp, setOtp] = useState('');
+  const { colors, isDark } = useAppTheme();
   const [countdown, setCountdown] = useState(RESEND_SECONDS);
   const [canResend, setCanResend] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -55,8 +57,8 @@ export default function EnterOtpScreen() {
   const ss = String(countdown % 60).padStart(2, '0');
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="dark" />
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <StatusBar style={isDark ? 'light' : 'dark'} />
 
       <View style={styles.content}>
         {/* ── Header ── */}
@@ -65,8 +67,8 @@ export default function EnterOtpScreen() {
             <Ionicons name="arrow-back" size={20} color={Colors.white} />
           </TouchableOpacity>
           <View style={styles.headerText}>
-            <Text style={styles.title}>Verify Code</Text>
-            <Text style={styles.subtitle}>
+            <Text style={[styles.title, { color: colors.textPrimary }]}>Verify Code</Text>
+            <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
               {'Please enter the code we just sent to your number\n(907) 555-0101'}
             </Text>
           </View>
@@ -104,7 +106,7 @@ export default function EnterOtpScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: undefined,
   },
   content: {
     flex: 1,
@@ -131,13 +133,13 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.semibold,
     fontSize: 24,
     lineHeight: 36,
-    color: Colors.textPrimary,
+    color: undefined,
   },
   subtitle: {
     fontFamily: FontFamily.regular,
     fontSize: 14,
     lineHeight: 19.6,
-    color: Colors.textSecondary,
+    color: undefined,
   },
   otpBlock: {
     gap: 20,
@@ -150,7 +152,7 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.medium,
     fontSize: 14,
     lineHeight: 21.7,
-    color: Colors.textSecondary,
+    color: undefined,
   },
   resendTimer: {
     fontFamily: FontFamily.medium,

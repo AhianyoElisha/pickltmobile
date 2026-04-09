@@ -4,11 +4,14 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { Colors, FontFamily } from '@/constants/theme';
+import { FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 
 const logo = require('@/assets/images/logo.png');
 
 export default function SplashScreen() {
+  const { colors, isDark } = useAppTheme();
+
   useEffect(() => {
     const timer = setTimeout(() => {
       router.replace('/(onboarding)/onboarding');
@@ -17,11 +20,11 @@ export default function SplashScreen() {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <StatusBar style="dark" />
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <StatusBar style={isDark ? 'light' : 'dark'} />
       <View style={styles.logoGroup}>
         <Image source={logo} style={styles.logo} contentFit="contain" />
-        <Text style={styles.tagline}>A stress-free move, every time.</Text>
+        <Text style={[styles.tagline, { color: colors.textPrimary }]}>A stress-free move, every time.</Text>
       </View>
     </View>
   );
@@ -30,7 +33,7 @@ export default function SplashScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -46,7 +49,7 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.regular,
     fontSize: 14,
     lineHeight: 19.6,
-    color: Colors.textPrimary,
+
     textAlign: 'center',
     width: 205,
   },

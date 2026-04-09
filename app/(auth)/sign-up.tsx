@@ -15,9 +15,11 @@ import { Button } from '@/components/ui/button';
 import { FormField } from '@/components/ui/form-field';
 import { useAuth } from '@/context/auth-context';
 import { Colors, FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 
 export default function SignUpScreen() {
   const { signIn } = useAuth();
+  const { colors, isDark } = useAppTheme();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -36,8 +38,8 @@ export default function SignUpScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="dark" />
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <StatusBar style={isDark ? 'light' : 'dark'} />
       <ScrollView
         contentContainerStyle={styles.scroll}
         keyboardShouldPersistTaps="handled"
@@ -50,8 +52,8 @@ export default function SignUpScreen() {
           </TouchableOpacity>
 
           <View style={styles.headerText}>
-            <Text style={styles.title}>Create an Account</Text>
-            <Text style={styles.subtitle}>
+            <Text style={[styles.title, { color: colors.textPrimary }]}>Create an Account</Text>
+            <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
               Join us today and unlock endless possibilities. It's quick, easy, and just a step away!
             </Text>
           </View>
@@ -89,12 +91,12 @@ export default function SignUpScreen() {
             style={styles.checkRow}
             onPress={() => setAgreed((v) => !v)}
             activeOpacity={0.8}>
-            <View style={[styles.checkbox, agreed && styles.checkboxChecked]}>
+            <View style={[styles.checkbox, agreed && styles.checkboxChecked, !agreed && { borderColor: colors.borderDark }]}>
               {agreed && (
                 <Ionicons name="checkmark" size={11} color={Colors.white} />
               )}
             </View>
-            <Text style={styles.termsText}>
+            <Text style={[styles.termsText, { color: colors.textSecondary }]}>
               By creating an account, you agree to our{' '}
               <Text style={styles.termsLink}>Terms and Conditions</Text>
               {' '}and{' '}
@@ -113,7 +115,7 @@ export default function SignUpScreen() {
 
       {/* ── Footer ── */}
       <View style={styles.footer}>
-        <Text style={styles.footerText}>Already have an account?  </Text>
+        <Text style={[styles.footerText, { color: colors.textSecondary }]}>Already have an account?  </Text>
         <TouchableOpacity onPress={() => router.push('/(auth)/login')} activeOpacity={0.7}>
           <Text style={styles.footerLink}>Sign In</Text>
         </TouchableOpacity>
@@ -125,7 +127,7 @@ export default function SignUpScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: undefined,
   },
   scroll: {
     paddingHorizontal: 20,
@@ -153,13 +155,13 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.semibold,
     fontSize: 24,
     lineHeight: 36,
-    color: Colors.textPrimary,
+    color: undefined,
   },
   subtitle: {
     fontFamily: FontFamily.regular,
     fontSize: 14,
     lineHeight: 19.6,
-    color: Colors.textSecondary,
+    color: undefined,
   },
 
   // Fields
@@ -181,7 +183,7 @@ const styles = StyleSheet.create({
     height: 16,
     borderRadius: 4,
     borderWidth: 1.5,
-    borderColor: Colors.borderDark,
+    borderColor: undefined,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 1,
@@ -195,7 +197,7 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.medium,
     fontSize: 14,
     lineHeight: 19.6,
-    color: Colors.textSecondary,
+    color: undefined,
   },
   termsLink: {
     color: '#16B364',
@@ -213,7 +215,7 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.medium,
     fontSize: 16,
     lineHeight: 22.4,
-    color: Colors.textSecondary,
+    color: undefined,
   },
   footerLink: {
     fontFamily: FontFamily.medium,

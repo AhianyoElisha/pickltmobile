@@ -8,11 +8,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from '@/components/ui/button';
 import { FormField } from '@/components/ui/form-field';
 import { Colors, FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 
 export default function SetNewPasswordScreen() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
+  const { colors, isDark } = useAppTheme();
 
   const isValid =
     newPassword.length > 0 &&
@@ -31,8 +33,8 @@ export default function SetNewPasswordScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="dark" />
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <StatusBar style={isDark ? 'light' : 'dark'} />
 
       <View style={styles.content}>
         {/* ── Header ── */}
@@ -41,8 +43,8 @@ export default function SetNewPasswordScreen() {
             <Ionicons name="arrow-back" size={20} color={Colors.white} />
           </TouchableOpacity>
           <View style={styles.headerText}>
-            <Text style={styles.title}>New Password</Text>
-            <Text style={styles.subtitle}>
+            <Text style={[styles.title, { color: colors.textPrimary }]}>New Password</Text>
+            <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
               Create a new password that is safe and easy to remember
             </Text>
           </View>
@@ -121,7 +123,7 @@ export default function SetNewPasswordScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: undefined,
   },
   content: {
     flex: 1,
@@ -148,13 +150,13 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.semibold,
     fontSize: 24,
     lineHeight: 36,
-    color: Colors.textPrimary,
+    color: undefined,
   },
   subtitle: {
     fontFamily: FontFamily.regular,
     fontSize: 14,
     lineHeight: 19.6,
-    color: Colors.textSecondary,
+    color: undefined,
   },
   fields: {
     gap: 16,

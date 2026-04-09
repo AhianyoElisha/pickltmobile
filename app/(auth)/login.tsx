@@ -10,11 +10,13 @@ import { Button } from '@/components/ui/button';
 import { FormField } from '@/components/ui/form-field';
 import { useAuth } from '@/context/auth-context';
 import { Colors, FontFamily } from '@/constants/theme';
+import { useAppTheme } from '@/context/theme-context';
 
 type LoginMethod = 'email' | 'phone';
 
 export default function LoginScreen() {
   const { signIn } = useAuth();
+  const { colors, isDark } = useAppTheme();
   const [method, setMethod] = useState<LoginMethod>('email');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -28,8 +30,8 @@ export default function LoginScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="dark" />
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <StatusBar style={isDark ? 'light' : 'dark'} />
       <ScrollView
         contentContainerStyle={styles.scroll}
         keyboardShouldPersistTaps="handled"
@@ -43,8 +45,8 @@ export default function LoginScreen() {
           </TouchableOpacity>
 
           <View style={styles.headerText}>
-            <Text style={styles.title}>Welcome Back!</Text>
-            <Text style={styles.subtitle}>Enter your registered account to sign in</Text>
+            <Text style={[styles.title, { color: colors.textPrimary }]}>Welcome Back!</Text>
+            <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Enter your registered account to sign in</Text>
           </View>
         </View>
 
@@ -54,7 +56,7 @@ export default function LoginScreen() {
             style={[styles.segment, method === 'email' && styles.segmentActive]}
             onPress={() => setMethod('email')}
             activeOpacity={0.8}>
-            <Text style={[styles.segmentText, method === 'email' && styles.segmentTextActive]}>
+            <Text style={[styles.segmentText, method === 'email' && { color: Colors.textPrimary }]}>
               Email
             </Text>
           </TouchableOpacity>
@@ -62,7 +64,7 @@ export default function LoginScreen() {
             style={[styles.segment, method === 'phone' && styles.segmentActive]}
             onPress={() => setMethod('phone')}
             activeOpacity={0.8}>
-            <Text style={[styles.segmentText, method === 'phone' && styles.segmentTextActive]}>
+            <Text style={[styles.segmentText, method === 'phone' && { color: Colors.textPrimary }]}>
               Phone Number
             </Text>
           </TouchableOpacity>
@@ -114,14 +116,14 @@ export default function LoginScreen() {
 
         {/* ── Or continue with ── */}
         <View style={styles.dividerRow}>
-          <View style={styles.dividerLine} />
-          <Text style={styles.dividerText}>Or continue with</Text>
-          <View style={styles.dividerLine} />
+          <View style={[styles.dividerLine, { backgroundColor: colors.borderLight }]} />
+          <Text style={[styles.dividerText, { color: colors.textSecondary }]}>Or continue with</Text>
+          <View style={[styles.dividerLine, { backgroundColor: colors.borderLight }]} />
         </View>
 
         {/* ── Google button ── */}
         <View style={styles.socialRow}>
-          <TouchableOpacity style={styles.googleBtn} activeOpacity={0.8}>
+          <TouchableOpacity style={[styles.googleBtn, { borderColor: colors.borderDark, backgroundColor: colors.surface }]} activeOpacity={0.8}>
             <GoogleIcon size={24} />
           </TouchableOpacity>
         </View>
@@ -129,7 +131,7 @@ export default function LoginScreen() {
 
       {/* ── Footer ── */}
       <View style={styles.footer}>
-        <Text style={styles.footerText}>Don't have an account? </Text>
+        <Text style={[styles.footerText, { color: colors.textSecondary }]}>Don't have an account? </Text>
         <TouchableOpacity onPress={() => router.push('/(auth)/sign-up')} activeOpacity={0.7}>
           <Text style={styles.footerLink}>Register</Text>
         </TouchableOpacity>
@@ -141,7 +143,7 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: undefined,
   },
   scroll: {
     paddingHorizontal: 20,
@@ -169,19 +171,19 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.semibold,
     fontSize: 24,
     lineHeight: 36,
-    color: Colors.textPrimary,
+    color: undefined,
   },
   subtitle: {
     fontFamily: FontFamily.regular,
     fontSize: 14,
     lineHeight: 19.6,
-    color: Colors.textSecondary,
+    color: undefined,
   },
 
   // Segmented control
   segmented: {
     flexDirection: 'row',
-    backgroundColor: 'rgba(99,129,205,0.7)',
+    backgroundColor: Colors.primary,
     borderRadius: 12,
     padding: 6,
     gap: 16,
@@ -205,7 +207,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   segmentTextActive: {
-    color: Colors.textPrimary,
+    color: undefined,
   },
 
   // Fields
@@ -235,12 +237,12 @@ const styles = StyleSheet.create({
   dividerLine: {
     flex: 1,
     height: StyleSheet.hairlineWidth,
-    backgroundColor: Colors.borderLight,
+    backgroundColor: undefined,
   },
   dividerText: {
     fontFamily: FontFamily.regular,
     fontSize: 14,
-    color: Colors.textSecondary,
+    color: undefined,
   },
 
   // Google
@@ -254,8 +256,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#23262F',
-    backgroundColor: Colors.white,
+    borderColor: undefined,
+    backgroundColor: undefined,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -272,7 +274,7 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.medium,
     fontSize: 16,
     lineHeight: 22.4,
-    color: Colors.textSecondary,
+    color: undefined,
   },
   footerLink: {
     fontFamily: FontFamily.medium,
